@@ -1,0 +1,2674 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+	<title>Gladiators</title>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type">
+
+	<meta name="title" content="Gladiators">
+	<meta name="description" content="Game">
+	
+	<button onclick="MoveRight()"> This is a button </button>
+	<link rel="icon" type="image/png" href="glario.png"> 
+	<link rel="stylesheet" type="text/css" href="style.css"> 
+	<link rel="manifest" href="manifest.manifest">
+</head>
+<body onload="">
+	<div class="maindiv" id="maindiv">
+	<div class="canvasdiv" id="canvasdiv">
+		<canvas class="canvas"id="canvas" width="640" height="360">
+		Your web browser does not support canvas.
+		</canvas>
+			<button class='LeftButton'  ontouchstart='ButtonMoveLeftPressed();' ontouchend='ButtonMoveLeftUnPressed();' style='position:fixed; top:100px; left: 20px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
+				<canvas class="MoveLeftButtonCanvas"id="MoveLeftButtonCanvas" width="50" height="50">
+				</canvas>
+			</button>
+			<button class='RightButton'  ontouchstart='ButtonMoveRightPressed();' ontouchend='ButtonMoveRightUnPressed();' style='position:fixed; top:100px; left: 120px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
+				<canvas class="MoveRightButtonCanvas"id="MoveRightButtonCanvas" width="50" height="50">
+				</canvas>
+			</button>		
+			<button class='JumpButton'  ontouchstart='ButtonJumpButtonPressed();' ontouchend='' style='position:fixed; top:10px; left: 300px; width:75px; height: 75px; background-color:rgba(0,0,255,.25); opacity:0.9; '>
+				<canvas class="JumpButtonCanvas"id="JumpButtonCanvas" width="50" height="50">
+				</canvas>
+			</button>	
+			<button class='AttackButton'  ontouchstart='AttackButtonPressed();' ontouchend='AttackButtonUnPressed()' style='position:fixed; top:125px; left: 450px; width:75px; height: 75px; background-color:rgba(255,0,0,.5); opacity:0.9; '>
+				<canvas class="AttackButtonCanvas"id="AttackButtonCanvas" width="50" height="50">
+				</canvas>
+			</button>				
+			<button class='DefendButton'  ontouchstart='DefendButtonPressed();' ontouchend='DefendButtonUnPressed()' style='position:fixed; top:125px; left: 350px; width:75px; height: 75px; background-color:rgba(255,0,0,.25); opacity:0.9; '>
+				<canvas class="DefendButtonCanvas"id="DefendButtonCanvas" width="50" height="50">
+				</canvas>
+			</button>				
+			
+			
+			<button onclick="ButtonMoveRightPressed()"> This is a button for advance right</button>
+			<button> This is a button for advance left</button>
+		</div>
+	</div><!-- maindiv -->
+</body>
+<script type="text/javascript">
+//onclick='ButtonMoveRightPressed();'
+//<meta name="viewport" content="width=device-width, initial-scale=0, maximum-scale=1, user-scalable=0">
+//<meta name="viewport" content="width=device-width, initial-scale=-5.0, minimum-scale = -5.0, user-scalable=-5.0"
+        /*    
+        @licstart  The following is the entire license notice for the 
+        JavaScript code in this page.
+        Copyright (C) 2022  Neonghostone
+        The JavaScript code in this page is free software: you can
+        redistribute it and/or modify it under the terms of the GNU
+        General Public License (GNU GPL) as published by the Free Software
+        Foundation, either version 3 of the License, or (at your option)
+        any later version.  The code is distributed WITHOUT ANY WARRANTY;
+        without even the implied warranty of MERCHANTABILITY or FITNESS
+        FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+        As additional permission under GNU GPL version 3 section 7, you
+        may distribute non-source (e.g., minimized or compacted) forms of
+        that code without the copy of the GNU GPL normally required by
+        section 4, provided you include this license notice and a URL
+        through which recipients can access the Corresponding Source.   
+        @licend  The above is the entire license notice
+        for the JavaScript code in this page.
+        */
+		
+// IMAGES
+
+//Possible names
+//Marius Et Gladius, Mario i la gladius ? 
+//Davidus Versus Hoplomachus ? 
+
+
+
+//LIST
+//Task list 
+//Lifespan LifeTime and Draw the otherd enemies
+//Make sure that the bug of the die resurrection does not occur
+//There is bGoingRight and bMovingLeft use em in a way you used DESIREDLOCATION good for pathfinding
+//Debug flying textes should go to same level as in level
+//Make sure platform up from you collides investigate why 
+//On enemy dead do lower the collision or others or make him not collide
+//bPreparign attack bug sometime looks left and attacks right
+//RandRange to on difficulty and all
+//Avoid from going to the max level
+//The messages should be from only a level 
+//Use the G for block F for attack
+//While stunned dont change direction
+//FG and f attack g protect
+//Bug sometimes the persecution mode does not work 
+//Make jumping AI on you trying to damage you
+//Cooldown for the jump
+//Jump stun on top of enemy
+//Make health bar
+
+
+
+
+//Demonstration images
+var ActualUniverse;
+var wall=new Image();
+var gladiatorTest=new Image();
+var TestPlatform=new Image();
+//Backround image for all the levels
+var BGImage=new Image();
+var COSImage=new Image();
+
+
+var EnemyCharacterStageOne;
+var SpeedOfMainCharacterDebug = 5;
+
+
+
+class Universe
+{ 
+
+	constructor(name, UnvierseState, level  ) 
+	{
+		
+		this.name = name;		
+		this.UnvierseState = UnvierseState;	
+		this.level = level;	
+		this.actorsIngame = [];
+		this.MainCharacter = undefined;
+		this.MainBiController = undefined;		
+		this.bDrawDebug = false;
+		this.floatingtexts = [];
+		this.MinLevel = -1;
+		this.MaxLevel = 2;		
+		
+	} 
+
+	//Side can be up down left or right but for now just left and right
+	loadNextLevel(Side)
+	{ 
+		if( Side == 0 && this.level + 1<= this.MaxLevel )
+		{ 
+			//window.alert("Next level "+this.level);
+			this.level++;
+		}
+		if( Side == 1 && this.level -1 >= this.MinLevel )
+		{
+			//window.alert("Previous level "+this.level);
+			this.level--;
+		}			
+	}
+	
+	InstanceGameplayFloatingText(x, y, floatingtext, textduration, textcolor, textspeed, textlevel, textsize)
+	{	
+		let LocalSpawnedText;
+		
+		LocalSpawnedText = new FloatingText(x, y, floatingtext, textduration, textcolor, textspeed, textlevel, textsize);
+		
+		this.floatingtexts.push(LocalSpawnedText);
+	}
+
+}
+
+//Desc: this are textes to symbolize what is going on and to debug 
+class FloatingText
+{
+	
+	constructor(x, y, floatingtext, textduration, textcolor, textspeed, textlevel, textsize) 
+	{
+		
+		this.x = x;
+		this.y = y;		
+		this.floatingtext = floatingtext;
+		this.textduration = textduration;
+		this.textcolor = textcolor;
+		this.textspeed = textspeed; 
+		this.textlevel = textlevel; //Level in which the text is at	
+		this.textsize = textsize;
+		setTimeout( this.destroytext.bind(this), textduration );	
+		
+	}
+	
+	TextTick(DeltaTime)
+	{
+		//this.y -= ( this.textspeed * DeltaTime );
+		this.y -= ( this.textspeed  );
+	}
+	
+	destroytext()
+	{
+		let textself = this;
+		let i = 0;
+	
+		//GetUniverse().floatingtexts.splice(GetUniverse().floatingtexts.findIndex(textself),1);
+
+		
+		GetUniverse().floatingtexts.filter(
+		
+			function( item ) 
+			{
+				
+
+				if( item == textself )
+				{
+					GetUniverse().floatingtexts.splice(i, 1);
+				}	
+				
+				i++;
+				//return( item == textself );	
+			}
+		
+		); 
+		
+		//GetUniverse().floatingtexts.pop();
+	}
+	
+}
+
+//Desc: This is a class 
+class Actor 
+{
+
+	constructor(name, x, y, team, 
+	mainTexture, InternalTexture, 
+	ActorHealth, ActorState, 
+	level
+	) 
+	{
+		//Other variables
+		this.AirActualSpeed = 2;
+		//contruct variables
+		this.name = name;
+		this.x = x; 
+		this.y = y;
+		this.team = team; //Team 1 Players/hero  Team 2 Enemies
+		
+		//Textures
+		this.mainTexture = mainTexture;//"BloodForWebGladiators1.png";
+		this.PrepareAttackTexture = "MulliusShieldAndSwordPrepareAttack.png"; //Prepare here
+		this.UnleashAttackTexture = "MulliusShieldAndSwordAndSheldJustUnleashedAttack.png";
+		this.BlockingTexture = "MulliusShieldProtecting.png";	//WIP	
+		this.DieTexture = "MulliusDeadRight.png";	
+	
+		//Left textrues
+		this.IdleTextureLeft = "MulliusShieldAndSwordIdleLeft.png";	
+		this.UnleashAttackTextureLeft = "MulliusShieldAndSwordAndSheldJustUnleashedAttackLeft.png";			
+		this.UnleashAttackTexturePrepareLeft = "MulliusShieldAndSwordPrepareAttackLeft.png";
+		this.BlockingTextureLeft = "MulliusShieldProtectingLeft.png";	//WIP	
+		this.DieTextureLeft = "MulliusDeadLeft.png";	
+		
+		this.InternalTexture=new Image();
+		this.InternalTexture.setAttribute("src", this.mainTexture);  
+		
+
+		//Collision and drawing
+		this.ActorHealth = 100; 	
+		this.ActorState = "Idle"; //"normal" is alive, "dead" "Bouncing, "TotallyStunned" is dead //This is the general state
+		this.collisionSizeMinX1 = -10; //the collision size box FOR PLATFORM AS DEF
+		this.collisionSizeMinY1 = -15; //the collision size box FOR PLATFORM AS DEF
+		this.collisionSizeMaxX1 = 250; //the collision size box FOR PLATFORM AS DEF
+		this.collisionSizeMaxY1 = 80; //the collision size box	FOR PLATFORM AS DEF
+		this.DrawSizeX = 256; //the draw size
+		this.DrawSizeY = 64; //the draw size	
+		this.ClippingImageSizeX = 885.0;
+		this.ClippingImageSizeY = 100.0;
+		this.bHasCollision = true;
+		this.XOffset = 0.0; //So we set land distance when walking, draws			
+		this.YOffset = 0.0; //So we set land distance when walking, draws
+		this.XOriginOffset = 0.0; //So we set land distance when walking, draws			
+		this.YOriginOffset = 0.0; //So we set land distance when walking, draws
+		this.Gravity = 0.3;
+
+		this.IsBouncingTimer = undefined; 
+		this.IsJumpingTimer = undefined;
+		this.bCanStopJumpNow = true;
+		this.bShouldGoDown = true;
+		this.IsCollidingWithSomething = false;
+		this.jumpSpeed = 4.0;
+		this.bMoving = false;
+		this.bGoingRight = false;		
+		this.bMovingLeft = false;
+		this.level = level;
+		//this.DrawSizeX = DrawSizeX; //the draw size
+		//this.DrawSizeY = DrawSizeY; //the draw size
+		this.OffensiveState = "Idle"; //always states start with capital letters
+		this.HandleOfPrepareMinTime = null;
+		this.HandleOfAttackDuration = null;
+		this.HandleOfBlockDuration = null;
+		this.HandleOfBlockCooldown = null;
+		this.MinPrepareAttackDuration = 500;			
+		this.AttackDuration = 500;	
+		this.bHasPressedAttackButtton = false;
+
+
+		this.BlockingDuration = 1500;	
+		this.CooldownOfBlockDuration = 1000;
+		
+		this.RandomFloatBounceSpeed = 10; //Automatically generated on the run
+		
+	} 
+	
+	//List of states 
+	SetState(ActorNewState)
+	{
+		this.ActorState = ActorNewState;
+	}
+	
+	//WIP to make sure that is not changed if it is not desired
+	SetTexture()
+	{
+		
+	}
+	
+	DrawDebugStuff()
+	{
+		//draw its origin
+		ctx.beginPath();
+		ctx.rect(this.x + this.XOriginOffset, this.y + this.YOriginOffset, 10, 10);
+		ctx.strokeStyle = "green";	
+		ctx.stroke();
+
+
+		//draw the collision light blue
+		ctx.beginPath();
+		ctx.rect( ( this.x + this.XOriginOffset ) + this.collisionSizeMinX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMinY1, 10, 10);
+		ctx.strokeStyle = "blue";	
+		ctx.stroke();
+
+		//draw the collision light blue
+		ctx.beginPath();
+		ctx.rect(  ( this.x + this.XOriginOffset ) + this.collisionSizeMaxX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMaxY1, 10, 10);
+		ctx.strokeStyle = "red";	
+		ctx.stroke();		
+		
+		ctx.fillStyle = 'White'; //It does not give color to a image
+		ctx.font = "30px Arial";
+		ctx.fillText(this.ActorState, this.x, this.y);
+
+	}
+	
+	
+	SetOffensiveState(ActorNewOffensiveState)
+	{
+		this.OffensiveState = ActorNewOffensiveState;
+		//GetUniverse().InstanceGameplayFloatingText(this.x, this.y, this.name+"="+this.OffensiveState, 1000.0, 'white', 1.0, this.level);
+	}	
+	
+	//NOT IN USE
+	ProcessMoveSmooth(newDesiredMovement)
+	{
+		this.x += newDesiredMovement;
+	}
+		
+	//sets another direction
+	ChangeDirection(NewDirection)
+	{
+
+		this.bMovingLeft = NewDirection
+		
+		if( this.ActorState != "Dead" ) 
+		{
+			if(this.bMovingLeft)
+			{			
+				if( (this.ActorState == "Idle"|| this.ActorState == "Jumping") && this.HandleOfPrepareMinTime == null && this.HandleOfAttackDuration == null && this.OffensiveState != "PreparingAttack" && this.OffensiveState != "Blocking") 
+				{ 
+					this.InternalTexture.setAttribute("src", this.IdleTextureLeft); 
+				}
+				else if( this.HandleOfPrepareMinTime != null ) 
+				{ 
+					this.InternalTexture.setAttribute("src", this.UnleashAttackTexturePrepareLeft);	
+				} 
+				else if( this.HandleOfAttackDuration != null ) 
+				{
+					this.InternalTexture.setAttribute("src", this.UnleashAttackTextureLeft);
+				} 
+				else if( this.OffensiveState == 'Blocking' ) 
+				{
+					this.InternalTexture.setAttribute("src", this.BlockingTextureLeft);
+				}				
+			
+			} 
+			else                                                                           
+			{
+				if((this.ActorState == "Idle"|| this.ActorState == "Jumping"  ) && this.HandleOfPrepareMinTime == null && this.HandleOfAttackDuration == null && this.OffensiveState != "PreparingAttack" && this.OffensiveState != "Blocking" ) 
+				{ 
+					this.InternalTexture.setAttribute("src", this.mainTexture);	
+				} 
+				else if( this.HandleOfPrepareMinTime != null ) //Use a sub states of attack later
+				{ 
+					this.InternalTexture.setAttribute("src", this.PrepareAttackTexture);
+				} 
+				else if( this.HandleOfAttackDuration != null ) 
+				{ 
+					this.InternalTexture.setAttribute("src", this.UnleashAttackTexture);
+				} 
+				else if( this.OffensiveState == 'Blocking'  ) 
+				{
+					this.InternalTexture.setAttribute("src", this.BlockingTexture);
+				}			
+			}   
+		}
+	}
+	
+	BeginJump()
+	{ 
+		
+		if( this.ActorState != "Jumping"  && this.ActorState != "TotallyStunned" ) 
+		{
+		
+			setTimeout( this.JumpAlreadyStarted.bind(this), 150 );	
+			this.bCanStopJumpNow = false;		
+			
+			this.SetState("Jumping");
+			this.AirActualSpeed = -10.0;
+			this.bCanStopJumpNow = false;					
+
+		} 
+	}
+	
+	BeginBounce( PawnBouncingOn )
+	{ 	
+		if( PawnBouncingOn.ActorState != 'TotallyStunned' )
+		{
+			PawnBouncingOn.GetTotallyStuned( GetRandomFloat(1000, 3000, 1) );
+		}
+		
+		if( this.ActorState != "Bouncing" ) 
+		{
+			//this.IsBouncingTimer = setInterval(BounceAlreadyStarted, 250);
+			setTimeout( this.BounceAlreadyStarted.bind(this), 150 );	
+			this.bCanStopJumpNow = false;		
+			this.AirActualSpeed = -6.0;
+			this.SetState("Bouncing");
+
+				if( GetRandomBoolean() == true ) 
+				{ 
+					this.RandomFloatBounceSpeed = GetRandomFloat(2.5, 5, 3);					
+				}
+				else
+				{
+					this.RandomFloatBounceSpeed = GetRandomFloat(-5, -2.5, 3);	
+				}
+
+		} 
+	}
+		
+	//With time out here 
+	BounceAlreadyStarted()
+	{ 	
+	
+		clearTimeout(this.IsBouncingTimer); 	
+		this.bCanStopJumpNow = true;
+		this.bShouldGoDown = true;
+				
+	}
+	
+	//With time out here 
+	JumpAlreadyStarted()
+	{ 		
+
+		clearTimeout(this.IsBouncingTimer); 	
+		this.bCanStopJumpNow = true;
+		this.bShouldGoDown = true;
+				
+	}	
+		
+	SetCollision( bNewCollision ) 
+	{ 
+		this.bHasCollision = bNewCollision;
+	}
+	
+	SetCustomGravity( NewCustomGravity ) 
+	{ 
+		this.Gravity = NewCustomGravity;
+	}
+				
+		
+	isActorCollidingWithSomething()
+	{ 
+		let self = this;
+		let actorsWhichIsCollidingWith = [];
+	
+		GetUniverse().actorsIngame.forEach(CheckCollisionForActorsInFunction);
+		
+		function CheckCollisionForActorsInFunction(value, index, array) 
+		{	
+			//&& value.constructor.name != "Pawn"
+			if( value != self && value.level == self.level && value.bHasCollision  ) 
+			{
+				if( DoesThisCollide( self.x + self.XOriginOffset, self.y + self.YOriginOffset, 
+				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
+				 ( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 ) ) 
+				
+				{
+					actorsWhichIsCollidingWith.push(value);
+				}
+			}
+			
+		
+		}
+		 
+		return actorsWhichIsCollidingWith;
+	}
+		
+		
+	isActorCollidingWithSomethingRightSide()
+	{ 
+		let self = this;
+		let actorsWhichIsCollidingWith = [];
+	
+		GetUniverse().actorsIngame.forEach(CheckCollisionForActorsInFunction);
+		
+		function CheckCollisionForActorsInFunction(value, index, array) 
+		{	
+			//&& value.constructor.name != "Pawn"
+			if( value != self && value.level == self.level && value.bHasCollision   ) 
+			{
+				if( DoesThisCollide( self.x + self.XOriginOffset + 20, self.y + self.YOriginOffset - 20, 
+				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
+				 ( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 ) ) 
+				
+				{
+					actorsWhichIsCollidingWith.push(value);
+				}
+			}
+		
+		}
+		 
+		return actorsWhichIsCollidingWith;
+	}		
+		
+	
+	isActorCollidingWithSomethingLeftSide()
+	{ 
+		let self = this;
+		let actorsWhichIsCollidingWith = [];
+	
+		GetUniverse().actorsIngame.forEach(CheckCollisionForActorsInFunction);
+		
+		function CheckCollisionForActorsInFunction(value, index, array) 
+		{	
+			//&& value.constructor.name != "Pawn"
+			if( value != self && value.level == self.level && value.bHasCollision   ) 
+			{
+				if( DoesThisCollide( self.x + self.XOriginOffset - 20, self.y + self.YOriginOffset - 20, 
+				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
+				 ( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 ) ) 
+				
+				{
+					actorsWhichIsCollidingWith.push(value);
+				}
+			}
+			
+		
+		}
+		 
+		return actorsWhichIsCollidingWith;
+	}		
+		
+	
+		
+	IsAnyActorAsPlatform(pActorsChecking = [])
+	{
+		let i= 0;
+
+		for( i = 0; i < pActorsChecking.length; i++) 
+		{ 
+			if(  ReturnDirectionActors ( this, pActorsChecking[i] ) < 0 )
+			{
+				return true;	
+			}
+		}
+		
+		return false;
+	}
+		
+	ActorTick(DeltaTime)
+	{
+		let self; 
+		let ArrayOfActorsColliding = [];
+		let ArrayOfActorsCollidingRight = [];
+		let ArrayOfActorsCollidingLeft = [];
+		
+		self = this;
+		//super.ActorTick(DeltaTime); 
+		//this.actorClass="Pawn";
+	
+		if( GetUniverse().bDrawDebug && this.level == GetUniverse().level  )
+		{
+			this.DrawDebugStuff();
+		}
+
+		if( this.bHasCollision )
+		{	
+			ArrayOfActorsColliding = this.isActorCollidingWithSomething();
+			ArrayOfActorsCollidingRight = this.isActorCollidingWithSomethingRightSide();		
+		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide();	
+		}
+
+
+		//Check if is in any order
+		this.ConsiderIfActorWentOutsideLevelByTick();
+
+
+		if(this.name == "MulliusMainChar") 
+		{
+			if( ArrayOfActorsCollidingRight[0] != undefined ) 
+			{
+				
+			}
+		}
+
+		if(this.name == "MulliusMainChar") 
+		{
+			if( ArrayOfActorsCollidingLeft[0] != undefined ) 
+			{
+				
+			}
+		}
+
+
+
+		if(this.bMoving ) 
+		{ 
+			if( this.name == "MulliusMainChar" ) 
+			{
+				if( ArrayOfActorsCollidingLeft.length > 0)
+				{	
+				
+				}
+
+				if( ArrayOfActorsCollidingRight.length > 0)
+				{					
+
+				}	
+			}
+	
+	
+			if(this.bGoingRight && ArrayOfActorsCollidingRight.length <= 0 && this.ActorState != "Bouncing" && this.ActorState != "TotallyStunned" &&  this.ActorState != "Dead" ) 
+			{
+				this.x += SpeedOfMainCharacterDebug; 
+			} 
+			if(!this.bGoingRight && ArrayOfActorsCollidingLeft.length <= 0 && this.ActorState != "Bouncing" && this.ActorState != "TotallyStunned" &&  this.ActorState != "Dead"  )
+			{ 
+				this.x -= SpeedOfMainCharacterDebug;	
+			}
+		}
+		
+		if( ArrayOfActorsColliding.length > 0 )
+		{		
+
+
+	//True up down false TranslateNumToUpOrDown( ReturnDirectionActors ( isActorCollidingWithSomething(), this ) )
+	
+			//this.IsAnyActorAsPlatform(ArrayOfActorsColliding) == true
+			if( this.IsAnyActorAsPlatform(ArrayOfActorsColliding) == true  )
+			{
+
+				if(  this.bCanStopJumpNow ) 
+				{
+					this.AirActualSpeed = 0;
+					
+					if( this.name == 'MulliusMainChar' ) 
+					{
+						
+					}
+				
+					if( this.ActorState == 'Jumping' || this.ActorState == 'Bouncing'  ) 
+					{
+						
+						if( this.ActorState == "Jumping" ) 
+						{
+							this.SetState("Idle");
+							this.bCanStopJumpNow = false;
+											
+							if( ArrayOfActorsColliding[0].constructor.name == 'Pawn' )
+							{ 
+
+								this.BeginBounce( ArrayOfActorsColliding[0] );//WIP should not be able to move left right while bouncing and go to a direction 
+							}
+							else
+							{
+								this.SetState('Idle');
+							}
+						}
+						
+						
+						if( this.ActorState == "Bouncing" ) 
+						{
+							this.SetState("Idle");
+							this.bCanStopJumpNow = false;
+										
+							if( ArrayOfActorsColliding[0].constructor.name == 'Pawn'  )
+							{
+
+								this.BeginBounce( ArrayOfActorsColliding[0] );//WIP should not be able to move left right while bouncing and go to a direction 
+							}
+							else
+							{
+								this.SetState('Idle');	
+							}							
+							
+						}							
+						
+						
+					}
+					
+					//this.AirActualSpeed = this.AirActualSpeed + 2;
+						
+						
+					//this.bCanStopJumpNow = false;
+						
+						
+				}
+				else
+				{
+
+					
+				}
+				
+			}
+			else
+			{		
+		
+				if( this.bCanStopJumpNow )
+				{
+					this.AirActualSpeed = 2.5;
+				}
+			 	
+			}
+		
+			
+		}
+		else
+		{
+			this.AirActualSpeed += this.Gravity;
+			
+			
+
+					
+					if( this.ActorState != "Jumping" && this.ActorState != "Bouncing"  && this.ActorState != "Dead"  ) 
+					{ 
+						this.SetState("Jumping");
+						this.bCanStopJumpNow = true;
+					}
+							
+			
+			/* left here just in case
+			if( this.name == 'MulliusMainChar' )
+			{
+				console.log("FROM Index actor tick ticking cannot stop jump now "+this.AirActualSpeed);						
+			}
+			*/
+					
+				
+
+			
+			/*
+			if(this.bCanStopJumpNow == false )
+			{
+				left in here just in case
+			}
+			*/ 			
+		}
+	
+
+	
+	
+		//GetUniverse().actorsIngame.forEach(CheckCollisionForActors);
+		
+		//Just for debugging purposes see if they are colliding AN DSTOP THE JUMPING
+		function CheckCollisionForActors(value, index, array) 
+		{
+	
+
+
+			if( value != self && value.constructor.name != "Pawn" && self.constructor.name == "Pawn" ) //Make sure we are
+			{					//Dont collide pawn and pawn																		
+				if( DoesThisCollide( self.x, self.y, (value.x - value.collisionSizeMinX1/2) + value.collisionSizeMinX1, (value.y - value.collisionSizeMinY1/2) + value.collisionSizeMinY1, (value.x + value.collisionSizeMaxX1 / 2 ) + value.collisionSizeMaxX1, (value.y + value.collisionSizeMaxY1/2 ) + value.collisionSizeMaxY1 ) ) 
+				{ 
+					
+
+				
+				}
+				else
+				{
+				}
+			}
+			
+			
+        }	
+	
+		if( this.constructor.name == "Pawn"   )
+		{
+			//if(this.bCanStopJumpNow == false ) 
+			//{
+				/*
+				if(this.name == 'MulliusMainChar' ) 
+				{
+					console.log("FROM Mullius character the actual speed is "+this.AirActualSpeed);
+				}
+				*/
+				
+				this.y += 1.0 * this.AirActualSpeed;
+				
+				
+
+		} 
+
+		if( this.ActorState == "Jumping" ) //Jumping gravity
+		{ 
+			/*
+			this.y -= 1.0 * this.jumpSpeed;
+			this.jumpSpeed -= 0.25;	
+			*/
+		}
+		
+		if( this.ActorState == "Bouncing" ) //Jumping gravity
+		{
+
+			this.x -= 0.5 * this.RandomFloatBounceSpeed; 
+			
+
+		}		
+		
+	
+		if( this.PawnController && this.ActorState != "Dead" ) //Valid check here the object exists 
+		{
+			/* DEPRA FOR NOW
+			this.x = InterpolateNumbers( this.x, 0.001, this.PawnController.DesiredLocToGoX );
+			
+			
+			if ( Math.abs( InterpolateNumbers( this.x, 0.001, this.PawnController.DesiredLocToGoX ) ) > 50 ) 
+			{   
+				if( InterpolateNumbers( this.x, 0.001, this.PawnController.DesiredLocToGoX ) >  this.x  && screen<4) 
+				{
+					this.ChangeMainTexture('enemyR.png');  
+				}
+				else if( InterpolateNumbers( this.x, 0.001, this.PawnController.DesiredLocToGoX ) <  this.x  && screen<4)
+				{ 
+					this.ChangeMainTexture('enemyL.png'); 
+				}
+				else if( InterpolateNumbers( this.x, 0.001, this.PawnController.DesiredLocToGoX ) >  this.x  && screen>3) 
+				{
+					this.ChangeMainTexture('enemyRB.png');  
+				}
+				else if( InterpolateNumbers( this.x, 0.001, this.PawnController.DesiredLocToGoX ) <  this.x  && screen>3) 
+				{ 
+					this.ChangeMainTexture('enemyLB.png'); 
+				}
+			} 
+			*/
+		}
+	}	
+
+	//Place it on actor tick 
+	ConsiderIfActorWentOutsideLevelByTick()
+	{
+		
+		//place this on vars '1280' 
+		if( this.x >= 1280 ) 
+		{
+
+			
+		}
+		else if( this.x <= 0 ) 
+		{ 
+
+	
+
+	    }
+		
+		
+	}
+
+
+	//to init the attack, basically like the input
+	Attack()
+	{
+		if( this.OffensiveState == "Idle" && this.HandleOfPrepareMinTime == null && this.HandleOfAttackDuration == null && this.OffensiveState != 'Stuned' ) 
+		{
+			this.PrepareAttack();
+		}
+		else
+		{
+			if( this.OffensiveState == 'Stuned' )
+			{
+				GetUniverse().InstanceGameplayFloatingText(this.x, this.y, "You cannot attack now! stuned!", 200.0, 'lightblue', 0.25, this.level);	
+			}		
+		}
+	} 
+	
+	//to init the prepare attack called on attack()
+	PrepareAttack()
+	{
+		if(this.OffensiveState == "Idle" && this.ActorState != "Dead" ) 
+		{ 
+			if( this.HandleOfPrepareMinTime == null ) 
+			{
+				if(this.bMovingLeft) 
+				{
+					this.InternalTexture.setAttribute("src", this.UnleashAttackTexturePrepareLeft);
+				}
+				else
+				{
+					this.InternalTexture.setAttribute("src", this.PrepareAttackTexture);	
+				}
+								
+				this.SetOffensiveState("PreparingAttack");		
+				this.HandleOfPrepareMinTime = setInterval( this.TimerOfPrepareAttackOver.bind(this), this.MinPrepareAttackDuration);
+			}
+		} 
+	}
+	
+	TimerOfPrepareAttackOver()
+	{
+		if( this.ActorState != "Dead"  ) 
+		{
+			clearInterval(this.HandleOfPrepareMinTime);	
+			this.HandleOfPrepareMinTime = null;
+			this.UnleashAttack();
+		}
+	
+	}
+	
+	
+	//to unleash the attack before PrepareAttack()	
+	UnleashAttack()
+	{
+		if(this.OffensiveState == "PreparingAttack" && this.ActorState != "Dead") 
+		{
+			if( this.bHasPressedAttackButtton == false && this.HandleOfPrepareMinTime == null  && this.HandleOfAttackDuration == null) 
+			{
+				if(this.bMovingLeft) 
+				{
+					this.InternalTexture.setAttribute("src", this.UnleashAttackTextureLeft);
+				}
+				else
+				{
+					this.InternalTexture.setAttribute("src", this.UnleashAttackTexture);	
+				}
+				
+				DoBladeCollisionCheck(this, 100);
+				
+				this.HandleOfAttackDuration = setInterval( this.FinishAttack.bind(this), this.AttackDuration);
+			}
+		}
+	}	
+
+	FinishAttack()
+	{ 
+	
+		if( this.ActorState != "Dead"  ) 
+		{ 
+		
+			this.InternalTexture.setAttribute("src", this.mainTexture);	
+			
+				if(this.bMovingLeft) 
+				{
+					this.InternalTexture.setAttribute("src", this.IdleTextureLeft);
+				}
+				else
+				{
+					this.InternalTexture.setAttribute("src", this.mainTexture);	
+				}		
+			
+			
+			if( this.OffensiveState != 'Stuned' && this.ActorState != "Dead" ) 
+			{
+				this.SetOffensiveState("Idle");
+			} 
+			
+			clearInterval(this.HandleOfAttackDuration);
+			this.HandleOfAttackDuration = null;
+				
+		}	
+	} 
+
+	//Defensive stuff
+	ProtectBlockWithShield()
+	{		
+		if( this.OffensiveState == 'Idle' && this.HandleOfBlockCooldown == null && this.OffensiveState != 'Stuned' && this.ActorState != "Dead") 
+		{
+			//constructor(x, y, floatingtext, textduration, textcolor, textspeed, textlevel) 
+			//GetUniverse().InstanceGameplayFloatingText(this.x, this.y, "Blocking!", 1000.0, 'red', 0.25, this.level);
+				
+				if(this.bMovingLeft) 
+				{
+					this.InternalTexture.setAttribute("src", this.BlockingTextureLeft);
+				}
+				else
+				{
+					this.InternalTexture.setAttribute("src", this.BlockingTexture);	
+				}	
+				
+			this.HandleOfBlockDuration = setInterval( this.UnProtectBlockWithShield.bind(this), this.BlockingDuration);			
+			this.SetOffensiveState('Blocking');
+		}		
+	}
+
+	//WIP
+	UnProtectBlockWithShield()
+	{		
+	
+		if( this.OffensiveState == 'Blocking' && this.ActorState != "Dead" ) 
+		{	
+	
+			if(this.bMovingLeft) 
+			{
+				this.InternalTexture.setAttribute("src", this.IdleTextureLeft);
+			}
+			else
+			{
+				this.InternalTexture.setAttribute("src", this.mainTexture);	
+			}		
+	
+
+			this.SetOffensiveState('Idle');
+			this.HandleOfBlockCooldown = setInterval( this.CooldownWithShield.bind(this), this.CooldownOfBlockDuration);				
+			clearInterval(this.HandleOfBlockDuration);
+		} 
+		
+
+	
+	}
+
+	CooldownWithShield()
+	{
+		clearInterval(this.HandleOfBlockCooldown);		
+		this.HandleOfBlockCooldown = null;
+	}
+
+	//Desc: Should process the hits after hit test WIP not in use? try to use it! 
+	ProcessHits(ActorGettingHit)
+	{ 
+			//is actor NOT protecting YES and is actor facing YES take damage							
+		if(ActorGettingHit.OffensiveState != 'Blocking' || !IsActorFacingOtherActor(ActorGettingHit, this)    )
+		{
+			ActorGettingHit.TakeDamage( GetRandomFloat( 5, 25, 0 )  ); 
+	
+		}
+		else if(  IsActorFacingOtherActor(ActorGettingHit, this) && ActorGettingHit.OffensiveState == 'Blocking'  ) 
+		{ 
+			GetUniverse().InstanceGameplayFloatingText( this.x, this.y, "Block!", 1000.0, 'yellow', 0.5, this.level  );
+			this.GetStuned(GetRandomFloat(1000, 1500, 2));
+		}
+		
+	} 
+
+	GetStuned(MilisecondsOfCooldown)
+	{ 
+		//if(  ) 
+		//{
+			GetUniverse().InstanceGameplayFloatingText( this.x, this.y, "Stuned! "+MilisecondsOfCooldown/1000+"s" , 1000.0, 'yellow', 0.1, this.level  );			
+			this.SetOffensiveState('Stuned');
+			setTimeout( this.EndOfStuned.bind(this), MilisecondsOfCooldown );	
+		//}
+	}
+
+
+	GetTotallyStuned(MilisecondsOfCooldown)
+	{ 
+		//if(  ) 
+		//{
+			GetUniverse().InstanceGameplayFloatingText( this.x, this.y,this.name+"Totally Stunned! "+MilisecondsOfCooldown/1000+"s" , 1000.0, 'yellow', 0.1, this.level  );			
+			this.SetState('TotallyStunned');
+			setTimeout( this.EndOfTotallyStuned.bind(this), MilisecondsOfCooldown );	
+		//}
+	}
+
+	EndOfStuned()
+	{
+		if( this.OffensiveState == 'Stuned'  ) 
+		{
+			this.SetOffensiveState('Idle');
+		}
+	}
+
+	EndOfTotallyStuned()
+	{
+		if( this.ActorState == 'TotallyStunned'  ) 
+		{
+			this.SetState('Idle');
+		}
+	}
+
+
+	//WIP
+	BlocksIncomingAttack(ActorAttacking)
+	{
+		
+	}
+	
+
+	//WIP?
+	ActorReachedOutSideLevel()
+	{ 
+	
+	}
+	
+	//Desc: Takes damage
+	TakeDamage(DamageToTake)
+	{
+		this.SpawnBlood();
+		this.ActorHealth -= DamageToTake;
+		
+		GetUniverse().InstanceGameplayFloatingText(this.x, this.y, DamageToTake+" Damage", DamageToTake*1000, 'red', DamageToTake/10, this.level);
+		
+		if( this.ActorHealth <= 0 ) 
+		{ 
+			this.ActorDie();
+		}	
+		
+	}
+	
+	//Desc: Spawns blood, it is a pawn to have some properties
+	SpawnBlood()
+	{
+		let LocalBlood;
+			
+		LocalBlood = GetUniverse().MainCharacter = spawnActor('Blood', this.x, this.y, 2, "BloodParticool.png", "Pawn", 
+		0 ,10000, 1, 1, false 
+		,"normal", this.level
+		);  		
+		LocalBlood.bHasCollision = false; //WIP disable collision so it falls through the ground, it is a pawn to have some properties
+
+	}
+
+	
+	//Desc: goes and dies it is the dead texture
+	ActorDie()
+	{
+		if( this.ActorState != 'Dead' ) 
+		{
+			this.SetCollision( false );
+			this.SetCustomGravity( 0.0 );	 //Avoid having gravity		
+			this.SetState('Dead');
+			this.PawnController.SetState('DeadPawn');
+			console.log( this.name + " Dies ");
+			//Change here the texture
+			this.InternalTexture.setAttribute("src", this.DieTexture);	
+			GetUniverse().InstanceGameplayFloatingText(this.x, this.y, "Ahhhh ! I die!", 2000.0, 'red', 0.075, this.level);	
+		}
+	}
+	
+	//Desc:  Dissapears from memory 
+	Destroy()
+	{
+		
+	}	
+	
+	
+	
+	//Sets the actor new location very core function
+	SetActorLocation(LocX = 0, LocY = 0)
+	{
+		this.x = LocX;
+		this.y = LocY;		
+	}
+
+
+	
+} 
+
+//Controls and can control
+class BiController extends Actor 
+{
+
+	constructor(name, x, y, team, mainTexture, controlledactor, DesiredLocToGoX, DesiredLocToGoY, bPlayerControlled) 
+	{
+		super(name, x, y, team, mainTexture);
+		this.controlledactor = controlledactor; 
+	
+		this.bMoveDesiredLocation = true;
+		this.DesiredLocToGoX = 0.0; 
+		this.DesiredLocToGoY = 0.0;     
+		this.bPlayerControlled = bPlayerControlled; //If not it will be AI controlled
+		this.StartingPointX = 0;
+		this.StartingPointY = 0;
+		this.Opponent = null;
+		this.AIDifficulty = 0.5; //FROM -Infinite to 1.0 which is hardest 
+		this.HandleOfMovTick = null;
+		this.HandleOfAttTick = null;		
+		this.HandleOfDefTick = null;
+		this.HandleOfAggTick = null;
+		this.bInputDisabled = false; //WIP this will disable the player to use input example while on conversation
+		this.bShouldBeAbleToTravelLevels = true; //WIP so they wont go to othe levels
+		
+		this.HandleOfMovTick = setInterval(this.MovementTick.bind(this), 1000); //Use bind this use it for the rest, and posses the monster
+		this.HandleOfAttTick = setInterval(this.AttentionTick.bind(this), 1000);
+		this.HandleOfDefTick = setInterval(this.DefenseTick.bind(this), 1000);
+		this.HandleOfAggTick = setInterval(this.AggressiveTick.bind(this), 1000);
+		
+	}
+  
+	posses(possessed)
+	{
+		this.controlledactor = possessed; 
+		possessed.PawnController = this;
+		this.SetDesiredLocation(possessed.x, possessed.y);		
+		this.SetStartingPoint( possessed.x, possessed.y );		
+	}
+   
+
+	//Dies not need to be latent
+	MoveToLocation(MoveX, MoveY)
+	{
+		
+		this.SetDesiredLocation(MoveX, MoveY);
+		
+	}
+  
+	//WIP 
+	//Not sure if will need to be latent
+ 	FollowActor(ActorToFollow)
+	{
+		
+		
+	} 
+  
+	SetResetDifficulty( NewdifficultyOfCharacter ) 
+	{
+		
+		this.AIDifficulty = NewdifficultyOfCharacter;
+		
+		clearInterval(this.HandleOfMovTick);			
+		clearInterval(this.HandleOfAttTick);			
+		clearInterval(this.HandleOfDefTick);	
+		clearInterval(this.HandleOfAggTick);	
+		
+		this.HandleOfMovTick = setInterval(this.MovementTick.bind(this),  this.TranslateDifficultyToMiliseconds(this.AIDifficulty) ); //Use bind this use it for the rest, and posses the monster
+		this.HandleOfAttTick = setInterval(this.AttentionTick.bind(this),  this.TranslateDifficultyToMiliseconds(this.AIDifficulty) );
+		this.HandleOfDefTick = setInterval(this.DefenseTick.bind(this),  this.TranslateDifficultyToMiliseconds(this.AIDifficulty) );
+		this.HandleOfAggTick = setInterval(this.AggressiveTick.bind(this), this.TranslateDifficultyToMiliseconds(this.AIDifficulty) );		
+			
+	}
+  
+	StopTimersBrainForAWhileOrForever( ShouldStopEmForever, TimeStopedCooldown ) 
+	{ 
+	
+	
+	}
+  
+	TranslateDifficultyToMiliseconds( DiffInFloat )
+	{
+		let finalDiffNum; 
+		
+						//0.25 default stupidity
+		finalDiffNum =  1.25 - DiffInFloat; 
+		
+		return 1000 * finalDiffNum;  
+		
+	}
+  
+	
+ 
+	SetDesiredLocation(PDesiredLocToGoX, PDesiredLocToGoY)
+	{
+		this.DesiredLocToGoX = PDesiredLocToGoX; 
+		this.DesiredLocToGoY = PDesiredLocToGoY; 
+	}  
+   
+   
+ 	ActorTick(DeltaTime)
+	{
+		if( !this.bPlayerControlled && this.ActorState != 'Dead' ) 
+		{
+
+			//make sure that 0 it is y in a future and they try to jump to release the location
+			if( ReturnDistanceFromTwoPoints(this.controlledactor.x, 0, this.DesiredLocToGoX, 0  ) > 5.0 && this.controlledactor.ActorState != 'Dead' && this.controlledactor.ActorState != 'TotallyStunned'  ) 
+			{			
+				if( this.DesiredLocToGoX <= this.controlledactor.x )
+				{			
+					this.MoveLeft();
+				}
+				else
+				{
+					this.MoveRight();
+				}
+			}	
+			else
+			{
+				this.MoveStop();						
+			}
+			
+			
+			
+		}
+	}		
+   
+ 	MoveStop()
+	{
+		this.controlledactor.bMoving = false; 
+	}  
+   
+	MoveRight()
+	{
+		this.controlledactor.bMoving = true; 
+		this.controlledactor.bGoingRight = true; 
+		this.controlledactor.ChangeDirection(false);
+	}
+	
+	MoveLeft()
+	{
+		this.controlledactor.bMoving = true; 
+		this.controlledactor.bGoingRight = false; 
+		this.controlledactor.ChangeDirection(true);
+	}
+   
+   
+   
+	MovementTick()
+	{ 
+
+		//to reach destination consider if desiredLoc is left or right and through that move the character
+		if(this.controlledactor != undefined && this.controlledactor.ActorState != "Dead" ) 
+		{
+			if(this.bPlayerControlled == false) 
+			{
+				if( this.ActorState == "RetardedRoamingGladiator" ) 
+				{
+					this.PerformRoamToRandomLocation();
+				}
+				if( this.ActorState == "AIGladiatorRoamLookFor" ) 
+				{						
+					this.PerformRoamAroundAPoint( this.StartingPointX, this.StartingPointY, 200 );
+				}	
+				if(  this.ActorState == "FightingOpponent"  ) 
+				{
+					
+					if( !this.bIsOpponentInAnotherLevel() ) 
+					{
+						this.MoveToLocation( this.Opponent.x, this.Opponent.y );
+					}
+					else
+					{
+						this.GoToOtherLevel( this.Opponent.level );
+					}
+					
+				}
+			}			
+		}
+
+	}  
+   
+	AttentionTick()
+	{ 
+		if(this.controlledactor != undefined && this.controlledactor.ActorState != "Dead" ) 
+		{
+			if(this.bPlayerControlled == false) 
+			{
+				if( this.ActorState == "RetardedRoamingGladiator" ) 
+				{
+					//No attention tick because he is retarded
+				}
+				if( this.ActorState == "AIGladiatorRoamLookFor" ) 
+				{						
+					//this.PerformRoamAroundAPoint
+					if ( this.GetNearestToAgroActor(100) != undefined )
+					{
+					    GetUniverse().InstanceGameplayFloatingText(this.controlledactor.x, this.controlledactor.y, "Agro!"+this.GetNearestToAgroActor(100).name, 1000.0, 'red', 0.25, this.controlledactor.level );	
+						this.SetOpponent(this.GetNearestToAgroActor(100));
+						this.SetState("FightingOpponent");
+					}
+				}					
+			}			
+		}
+
+
+	}  
+  
+	DefenseTick()
+	{ 
+		//to reach destination consider if desiredLoc is left or right and through that move the character
+		if(this.controlledactor != undefined && this.controlledactor.ActorState != "Dead" ) 
+		{
+			if(this.bPlayerControlled == false) 
+			{
+				if( this.ActorState == "RetardedRoamingGladiator" ) 
+				{				
+					this.PerformBlock()
+				}
+				if( this.ActorState == "AIGladiatorRoamLookFor" ) 
+				{		
+					if( true )
+					{
+						this.PerformBlock()
+					}
+				}				
+				if( this.ActorState == "FightingOpponent" ) 
+				{		
+					if( ReturnDistanceFromTwoActors( this.controlledactor, this.Opponent  ) < 200 && this.Opponent.OffensiveState == 'PreparingAttack'  )
+					{
+						this.PerformBlock();
+					}
+				}					
+			}	
+		}
+	} 
+  
+	AggressiveTick()
+	{ 
+		//to reach destination consider if desiredLoc is left or right and through that move the character
+		if(this.controlledactor != undefined && this.controlledactor.ActorState != "Dead" ) 
+		{
+			if(this.bPlayerControlled == false) 
+			{
+				if( this.ActorState == "RetardedRoamingGladiator" ) 
+				{						
+					this.PerformAttack();
+				}
+				if( this.ActorState == "AIGladiatorRoamLookFor" ) 
+				{						
+					
+				}	
+				if( this.ActorState == "FightingOpponent" ) 
+				{																					//Place the cooldowner here
+					if( ReturnDistanceFromTwoActors( this.controlledactor, this.Opponent  ) < 200 && true  )
+					{
+						this.PerformAttack();
+					}
+				}	
+				
+			}			
+		}
+
+	} 
+  
+	SetOpponent( NewOpponent )
+	{
+		this.Opponent = NewOpponent; 
+	}
+  
+	SetStartingPoint(PointX, PointY)
+	{
+		this.StartingPointX = PointX;
+		this.StartingPointY = PointY;		
+	}
+  
+	PerformRoamAroundAPoint(PointX, PointY, FurthestPoint)
+	{
+
+		if( this.controlledactor.x > PointX+FurthestPoint || this.controlledactor.x < PointX+( FurthestPoint * -1 )  ) 
+		{
+			GetUniverse().InstanceGameplayFloatingText(this.controlledactor.x, this.controlledactor.y, "Too far away!", 1000.0, 'white', 0.05, this.level);
+			this.SetDesiredLocation(PointX, PointY); 
+		}
+		else
+		{
+			//GetUniverse().InstanceGameplayFloatingText(this.controlledactor.x, this.controlledactor.y, "Going to some place!", 1000.0, 'white', 0.05, this.level);
+			this.SetDesiredLocation( GetRandomFloat( PointX+( FurthestPoint * -1 ) ,PointX+FurthestPoint ) , GetRandomFloat( PointY, PointY ),  4);  	
+		}
+		
+	}
+  
+  
+	PerformRoamToRandomLocation()
+	{ 
+	let RandBoolMoveRight;
+	
+		RandBoolMoveRight = GetRandomBoolean();
+		
+		this.controlledactor.bMoving = true; //WIP If this is true shall move by tick same as bRightPressed so far
+		this.controlledactor.bGoingRight = RandBoolMoveRight;
+		this.controlledactor.ChangeDirection(!RandBoolMoveRight);
+		setTimeout( this.StopMoving.bind(this), GetRandomFloat(50, 100, 3));		
+	}
+	
+	PerformAttack()
+	{ 
+		this.controlledactor.PrepareAttack();	
+	}
+	
+	PerformBlock()
+	{ 
+		this.controlledactor.ProtectBlockWithShield();	
+	}
+		
+	GetNearestToAgroActor(MinDistanceToAgro)
+	{
+		let AllActorToCompare = [];
+		
+		AllActorToCompare = GetAllActorsIngame();
+		
+		for(let i = 0; i < AllActorToCompare.length; i++) 
+		{ 
+			if( AllActorToCompare[i].constructor.name == "Pawn" && this.controlledactor != AllActorToCompare[i] && ReturnDistanceFromTwoActors(this.controlledactor, AllActorToCompare[i]) < MinDistanceToAgro && AllActorToCompare[i].level == this.controlledactor.level ) 
+			{
+				//Check team here later
+				return AllActorToCompare[i];
+			}
+		}
+		
+	}
+	
+	//Desc: stops totally the movement
+	StopMoving()
+	{
+		this.controlledactor.bMoving = false; //WIP If this is true shall move by tick same as bRightPressed so far
+		this.controlledactor.bGoingRight = false;		
+	}
+
+	//Desc: goes to specific level  
+	GoToOtherLevel( LevelToGo ) 
+	{ 
+		GetUniverse().InstanceGameplayFloatingText( this.controlledactor.x, this.controlledactor.y-100, "Goin to other level!", 5000.0, 'blue', 0.1, this.level );
+	
+		if( this.controlledactor.level < LevelToGo )
+		{
+			this.MoveToLocation(1310, 500);
+		}
+		else
+		{
+			this.MoveToLocation(-50, 500);	
+		}
+	}
+	
+	//Desc: returns true or false depending on the level
+	bIsOpponentInAnotherLevel()
+	{
+	
+		if( this.Opponent.level < this.controlledactor.level || this.Opponent.level > this.controlledactor.level ) 
+		{
+			return true;
+		}
+	
+	}
+  
+  
+}
+
+
+class Pawn extends Actor 
+{
+	constructor(name, x, y, team, mainTexture, PawnController, Screen, actorClass, collisionSizeMinX1, collisionSizeMinY1, collisionSizeMaxX1, collisionSizeMaxY1, DrawSizeX, DrawSizeY, ClippingImageSizeX, ClippingImageSizeY, level ) 
+	{
+		super(name, x, y, team, mainTexture, "some interal texture", "Some health", "Some actor state", collisionSizeMinX1, collisionSizeMinY1, collisionSizeMaxX1, collisionSizeMaxY1, DrawSizeX, DrawSizeY, ClippingImageSizeX, ClippingImageSizeY, level ); 
+//constructor(name, x, y, team, mainTexture, InternalTexture, ActorHealth, ActorState, collisionSizeMinX1, collisionSizeMinY1, collisionSizeMaxX1, collisionSizeMaxY1, DrawSizeX, DrawSizeY) 
+	
+		this.collisionSizeMinX1 = -125; //the collision size box
+		this.collisionSizeMinY1 = -100; //the collision size box
+		this.collisionSizeMaxX1 = 125; //the collision size box
+		this.collisionSizeMaxY1 = 125; //the collision size box		
+		this.DrawSizeX = 100; //the collision size box		
+		this.DrawSizeY = 128; //the collision size box	
+		this.ClippingImageSizeX = 128; 
+		this.ClippingImageSizeY = 128;
+
+
+		
+	}
+
+
+
+	ActorFeltThroughWorld()
+	{ 
+		if(this.ActorState != "Dead") 
+		{ 
+			this.ActorDie();
+		}
+	}
+	
+
+	ActorOutsideWorld()
+	{ 
+		if(this.ActorState != "Dead") 
+		{ 
+			this.DestroySelf();
+		}	
+	}	
+	
+	
+	//Place it on actor tick 
+	ConsiderIfActorWentOutsideLevelByTick()
+	{
+		
+
+		
+		//place this on vars '1280' 
+		if( this.x >= 1280 ) 
+		{
+
+			if(  this.PawnController != undefined   ) //This is for the next level
+			{ 
+				if( this.PawnController.bPlayerControlled == true ) 
+				{
+					GetUniverse().loadNextLevel(0);						
+				}
+				else
+				{
+
+				}
+			}
+			
+
+
+			if( GetUniverse().MaxLevel != this.level ) 
+			{
+				this.SetActorLocation(15, this.y);		//Make here check if can go to next level	bCanGoToNextLevel
+				this.level++;	
+			}
+			else
+			{
+				this.SetActorLocation(1200, this.y);
+			}
+			
+							
+		}
+		
+		
+		
+		else if( this.x <= 0 ) //This is for the previous level
+		{ 
+
+			
+			if(  this.PawnController != undefined  )
+			{ 
+
+				if( this.PawnController.bPlayerControlled == true ) 
+				{
+					GetUniverse().loadNextLevel(1);					
+				}
+				else
+				{
+					
+				}
+
+			}				
+			
+			if( GetUniverse().MinLevel != this.level) 
+			{
+				this.SetActorLocation(1200, this.y);				
+				this.level--;	
+			}
+			else
+			{
+				this.SetActorLocation(15, this.y);
+			}			
+					
+	    }
+		
+		
+	}
+	
+	
+
+
+}
+
+function spawnActor(name, x,y, team, 
+mainTexture, actorClass, 
+ControlledActor, LifeTimeOfActor, ActorInitialSpeedX, ActorInitialSpeedY, bIsPlayerControlled, 
+state, level )
+{
+
+
+
+
+	if( actorClass == "Universe" )
+	{	
+
+	    return new Universe( name, state, level  ); 		
+	}
+
+    if( actorClass == "Actor")
+	{
+			//constructor(name, x, y, team, mainTexture, InternalTexture, ActorHealth, ActorState, collisionSizeMinX1, collisionSizeMinY1, collisionSizeMaxX1, collisionSizeMaxY1, DrawSizeX, DrawSizeY) 
+	    GetUniverse().actorsIngame.push(new Actor(name, x, y, team, mainTexture, "InternalTexture", "Somehealth", state, level )); 
+	}
+
+    if( actorClass == "BiController")   //constructor(name, x, y, team, mainTexture, controlledactor, DesiredLocToGoX, DesiredLocToGoY, bPlayerControlled) 
+	{
+	    GetUniverse().actorsIngame.push(new BiController(name, x, y, team, mainTexture, screen, 0, 0,  bIsPlayerControlled, level  )); 
+	}
+
+	if( actorClass == "Pawn" )
+	{	
+	    GetUniverse().actorsIngame.push(new Pawn(name, x, y, team, mainTexture, "some controller" , Screen, actorClass,    level    ) );		
+	}
+	
+		
+	
+//constructor(name, x, y, team, mainTexture, PawnController, Screen, actorClass, collisionSizeMinX1, collisionSizeMinY1, collisionSizeMaxX1, collisionSizeMaxY1, DrawSizeX, DrawSizeY)
+	return GetUniverse().actorsIngame[GetUniverse().actorsIngame.length-1]; 	
+}
+
+
+function BeginPlay() 
+{
+	window.requestAnimationFrame(draw);	
+       
+	
+
+	
+    if (document.images) 
+    { 
+	
+		//Buttons here---------------------------------> // 
+		
+		var ButtonOfCanvasMoveLeft = document.getElementById('MoveLeftButtonCanvas');
+	
+
+		
+		if (ButtonOfCanvasMoveLeft.getContext) 
+		{
+			var ctxx = ButtonOfCanvasMoveLeft.getContext('2d');
+			ctxx.beginPath();
+			var imgx = new Image();   // Create new img element
+			
+			imgx.addEventListener("load", function() 
+			{
+				ctxx.drawImage(imgx,0,0,128,128,0,0,40,40);
+				ctxx.font = "10px Arial";
+				ctxx.fillStyle = "white";
+				ctxx.fillText("<- LEFT",0, 40);
+			}, false);
+				
+			imgx.src = 'MulliusShieldAndSwordIdleLeft.png';
+
+		}
+		
+		
+		var ButtonOfCanvasMoveRight = document.getElementById('MoveRightButtonCanvas');
+			
+		
+		if (ButtonOfCanvasMoveRight.getContext) 
+		{
+			var ctxxr = ButtonOfCanvasMoveRight.getContext('2d');
+			ctxxr.beginPath();
+			var imgxr = new Image();   // Create new img element
+			
+			imgxr.addEventListener("load", function() 
+			{
+				ctxxr.drawImage(imgxr,0,0,128,128,0,0,40,40);
+				ctxxr.font = "10px Arial";
+				ctxxr.fillStyle = "white";
+				ctxxr.fillText("RIGHT ->",0, 40);
+			}, false);
+				
+			imgxr.src = 'MulliusShieldAndSwordIdle.png';
+
+		}		
+		
+		var ButtonOfCanvasJump = document.getElementById('JumpButtonCanvas');
+			
+		
+		if (ButtonOfCanvasJump.getContext) 
+		{
+			var ctxxj = ButtonOfCanvasJump.getContext('2d');
+			ctxxj.beginPath();
+			var imgxj = new Image();   // Create new img element
+			
+			imgxj.addEventListener("load", function() 
+			{
+				ctxxj.drawImage(imgxj,0,0,128,128,0,0,40,40);
+				ctxxj.font = "10px Arial";
+				ctxxj.fillStyle = "white";
+				ctxxj.fillText("^ Jump ^",0, 50);
+			}, false);
+				
+			imgxj.src = 'MulliusDeadRight.png';
+
+		}			
+		
+		
+		var ButtonOfCanvasAttack = document.getElementById('AttackButtonCanvas');
+			
+		
+		if (ButtonOfCanvasAttack.getContext) 
+		{
+			var ctxxa = ButtonOfCanvasAttack.getContext('2d');
+			ctxxa.beginPath();
+			var imgxa = new Image();   // Create new img element
+			
+			imgxa.addEventListener("load", function() 
+			{
+				ctxxa.drawImage(imgxa,0,0,128,128,0,0,40,40);
+				ctxxa.font = "10px Arial";
+				ctxxa.fillStyle = "white";
+				ctxxa.fillText(" ATTACK! ^",0, 50);
+			}, false);
+				
+			imgxa.src = 'MulliusShieldAndSwordAndSheldJustUnleashedAttack.png';
+
+		}		
+		
+		
+		var ButtonOfCanvasDefend = document.getElementById('DefendButtonCanvas');
+			
+		
+		if (ButtonOfCanvasDefend.getContext) 
+		{
+			var ctxxd = ButtonOfCanvasDefend.getContext('2d');
+			ctxxd.beginPath();
+			var imgxd = new Image();   // Create new img element
+
+			imgxd.addEventListener("load", function() 
+			{
+				ctxxd.drawImage(imgxd,0,0,128,128,0,0,40,40);
+				ctxxd.font = "10px Arial";
+				ctxxd.fillStyle = "white";
+				ctxxd.fillText("|DEFEND| ^",0, 50);
+			}, false);
+				
+			imgxd.src = 'MulliusShieldProtectingLeft.png';
+
+		}		
+		
+				
+		
+		
+		
+		//Buttons here---------------------------------> //	
+	
+	
+		//Examples of assigning images to stuff SOme references delete this*
+		gladiatorTest.setAttribute("src", "Mullius.png");
+		BGImage.setAttribute("src", "Bacrkound.png");
+		TestPlatform.setAttribute("src", "Platform.png");
+		COSImage.setAttribute("src", "COSLogo.png");
+		
+		
+		//Spawn the GameInfo the universe and such 
+		ActualUniverse = spawnActor('UniverseInfo', 50, 50, 2, 
+		"Platform.png", "Universe",0 ,10000, 1, 1, 
+		false
+		,"normal", 0 
+		);   //Platform 5 on the left to test collision				
+		
+		
+		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 450, 2, "MulliusShieldAndSwordIdle.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 0
+		);   //Mullius main character, player controlled
+		
+		
+		GetUniverse().MainCharacter.collisionSizeMinX1 = -50;
+		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
+		GetUniverse().MainCharacter.collisionSizeMaxX1 = 50;
+		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
+		GetUniverse().MainCharacter.XOriginOffset = 50; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
+		
+		EnemyCharacterStageOne = spawnActor('EnemeyStageOneNumberOne', 300, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 0
+		);   //Enemy to kill 1
+		
+		//Add the draw size and such to it
+		
+		EnemyCharacterStageOne.DrawSizeX = 150;
+		EnemyCharacterStageOne.DrawSizeY = 150;			
+		EnemyCharacterStageOne.ClippingImageSizeX = 128.0;
+		EnemyCharacterStageOne.ClippingImageSizeY = 128.0;		
+		EnemyCharacterStageOne.YOffset = +20; //Draw offset		
+		
+		EnemyCharacterStageOne.collisionSizeMinX1 = -50;
+		EnemyCharacterStageOne.collisionSizeMinY1 = -100;
+		EnemyCharacterStageOne.collisionSizeMaxX1 = 70;
+		EnemyCharacterStageOne.collisionSizeMaxY1 = 30;	
+		EnemyCharacterStageOne.XOriginOffset = 50; //So we set land distance when walking, draws			
+		EnemyCharacterStageOne.YOriginOffset = 100; //So we set land distance when walking, draws		
+						
+			
+		
+		/*
+		this.collisionSizeMinX1 = -125; //the collision size box
+		this.collisionSizeMinY1 = -200; //the collision size box
+		this.collisionSizeMaxX1 = 125; //the collision size box
+		this.collisionSizeMaxY1 = 125; //the collision size box	
+		this.DrawSizeX = 256; //the draw size
+		this.DrawSizeY = 64; //the draw size	
+		this.ClippingImageSizeX = 885.0;
+		this.ClippingImageSizeY = 100.0;
+		*/
+		
+		//Controllers AI and player controller
+		
+			//PlayerController
+			
+		GetUniverse().MainBiController = spawnActor('PlayerBiController', 25, 0, 2, "Mullius.png", "BiController",
+		GetUniverse().MainCharacter,100000,0,0,true );   //Controller bi so both for player and others
+
+		GetUniverse().MainBiController.posses(GetUniverse().MainCharacter); //Posses by player controller					//Collisions -X -Y X Y 
+	
+		//GetUniverse().MainBiController
+		
+
+
+
+		
+
+		
+		
+		
+		//Level 0
+		spawnActor('Plataforma1Level-1', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1	
+	
+		spawnActor('Plataforma2Level-1', 200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+		
+		spawnActor('Plataforma3Level-1', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+				
+		spawnActor('Plataforma4Level-1', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+						
+		spawnActor('Plataforma5Level-1', 800, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+
+		spawnActor('Plataforma6Level-1', 1000, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+										
+		spawnActor('Plataforma7Level-1', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+			
+		spawnActor('Plataforma8Level-1', 50, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1	level -1
+				
+		
+		//Next level 1
+		spawnActor('Plataforma1Level0', 50, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 1 level 0	
+		
+		spawnActor('Plataforma2Level0', 300, 600, 2, "Platform.png", "Actor",
+		0 ,10000, 1, 1, false,
+		 "normal", 0 );   //Platform 2 level 0		
+		
+		spawnActor('Plataforma3Level0', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 3 level 0	
+		
+		spawnActor('Plataforma4Level0', 700, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+		
+		spawnActor('Plataforma5Level0', -175, 600, 2, "Platform.png", "Actor",
+		0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 5 on the left to test collision		
+		
+		//spawnActor('Plataforma6', 900, 600, 2, "Platform.png", "Actor"
+		//,0 ,10000, 1, 1, false, 
+		// "normal", 0 );   //Platform 4		
+				
+		spawnActor('Plataforma7Level0', 1100, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+				
+		spawnActor('Plataforma8ElevatedLevel0', 900, 525, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+						
+		
+		spawnActor('Plataforma9ElevatedLevel0', 700, 350, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+						
+				
+	
+		//Next level 2
+		spawnActor('Plataforma1Level2', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1	
+	
+		spawnActor('Plataforma2Level2', 200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+		
+		spawnActor('Plataforma3Level2', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+				
+		spawnActor('Plataforma4Level3', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+						
+		spawnActor('Plataforma5Level4', 800, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+
+		spawnActor('Plataforma6Level5', 1000, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+										
+		spawnActor('Plataforma7Level6', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+			
+			
+		spawnActor('Plataforma7', 1100, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4		
+				
+		spawnActor('Plataforma8Elevated', 900, 525, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4		
+						
+		
+		
+		//Next level 3
+		spawnActor('Plataforma1Level3', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2	
+	
+		spawnActor('Plataforma2Level3', 200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+		
+		spawnActor('Plataforma3Level3', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+				
+		spawnActor('Plataforma4Level3', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+						
+		spawnActor('Plataforma5Level3', 800, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+
+		spawnActor('Plataforma6Level3', 1000, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+										
+		spawnActor('Plataforma7Level3', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+								
+	
+		EnemyCharacterStageTwo = spawnActor('EnemeyStage2', 1000, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
+		0 ,10000, 1, 1, false,
+		"normal", 1
+		);   //Enemy to kill 1		
+		
+		//Textures
+		//The idle one is already included
+		EnemyCharacterStageOne.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+		EnemyCharacterStageOne.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+		EnemyCharacterStageOne.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+		EnemyCharacterStageOne.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP			
+		
+		//Left textrues
+		EnemyCharacterStageOne.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+		EnemyCharacterStageOne.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+		EnemyCharacterStageOne.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+		EnemyCharacterStageOne.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+		EnemyCharacterStageOne.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
+				
+			//AIController
+		AIBiController1 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageOne,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController1.SetState("AIGladiatorRoamLookFor");
+		AIBiController1.posses(EnemyCharacterStageOne) //Posses by player controller					//Collisions -X -Y X Y 
+		AIBiController1.SetResetDifficulty(-1.5); //Enemy 1 should be easy
+		
+		
+		//AIController
+		AIBiController2 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageTwo,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController2.posses(EnemyCharacterStageTwo) //Posses by player controller					//Collisions -X -Y X Y 	
+		AIBiController2.SetState("AIGladiatorRoamLookFor");		
+		AIBiController2.SetResetDifficulty(-1.25); //Not that retarded as the first one 	
+		
+		//The idle one is already included
+		EnemyCharacterStageTwo.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+		EnemyCharacterStageTwo.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+		EnemyCharacterStageTwo.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+		EnemyCharacterStageTwo.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP	
+		
+		//Left textrues
+		EnemyCharacterStageTwo.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+		EnemyCharacterStageTwo.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+		EnemyCharacterStageTwo.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+		EnemyCharacterStageTwo.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+		EnemyCharacterStageTwo.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
+		
+		EnemyCharacterStageTwo.collisionSizeMinX1 = -50;
+		EnemyCharacterStageTwo.collisionSizeMinY1 = -100;
+		EnemyCharacterStageTwo.collisionSizeMaxX1 = 70;
+		EnemyCharacterStageTwo.collisionSizeMaxY1 = 30;	
+		EnemyCharacterStageTwo.XOriginOffset = 50; //So we set land distance when walking, draws			
+		EnemyCharacterStageTwo.YOriginOffset = 100; //So we set land distance when walking, draws		
+						
+	
+
+	
+		//function spawnActor(name, x,y, team, mainTexture, actorClass, ControlledActor, LifeTimeOfActor, ActorInitialSpeedX, ActorInitialSpeedY, bIsPlayerControlled, pcollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, pDrawSizeX, pDrawSizeY, pClippingImageSizeX, pClippingImageSizeY)
+
+		//spawnActor('Plataforma4Elevated', 400, 450, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -150.0 ,-200.0, 150.0, 200.0, 256.0, 64.0, 885.0, 100.0 );   //Platform 3		
+				
+		
+		//spawnActor('Plataforma', 75, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
+		//spawnActor('Plataforma', 100, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1			
+	}
+}                      
+
+	
+function addLoadEvent(func) 
+{
+	
+		
+	var oldonload = window.onload;
+	if (typeof window.onload != 'function') 
+        {
+		window.onload = func;
+	    } 
+    else 
+        {
+    	window.onload = function() 
+            {
+			if (oldonload) 
+                {
+				oldonload();
+			    }
+			func();
+		    }
+    	}
+    }
+// PRELOAD IMAGES
+addLoadEvent(BeginPlay);
+//VARS
+let deltaTime = 0;
+let lastTimestamp = 0;
+const perfectFrameTime = 1000 / 60;
+
+
+// CANVAS
+var canvas = document.getElementById('canvas');
+
+if (canvas.getContext) 
+{
+	var ctx = canvas.getContext('2d');
+}
+// KEYBOARD
+
+
+
+document.onkeydown = checkKeyDown;
+function checkKeyDown(e) //Interpolating with no purpose!
+    {
+		//left walk key <-
+		if (e.keyCode == '37' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{
+				GetUniverse().MainBiController.controlledactor.bMoving = true;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+				GetUniverse().MainBiController.controlledactor.ChangeDirection(true);
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x - 10 );
+			}
+        }
+		
+		//right walk key ->
+		if (e.keyCode == '39' ) 
+        {   
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{
+				GetUniverse().MainBiController.controlledactor.bMoving = true;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = true;
+				GetUniverse().MainBiController.controlledactor.ChangeDirection(false);		
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x + 10 );	
+			}			
+        }
+		
+		//Left Walk A key
+		if (e.keyCode == '65' )  
+        {  
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{		
+				GetUniverse().MainBiController.controlledactor.bMoving = true;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+				GetUniverse().MainBiController.controlledactor.ChangeDirection(true);
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x - 10 );	
+			}	
+        }	
+		
+		//Right Walk D key		
+		if (e.keyCode == '68' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.controlledactor.bMoving = true;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = true;		
+				GetUniverse().MainBiController.controlledactor.ChangeDirection(false);			
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x + 10 );
+			}	
+        }				
+	
+		//Spacebar jump		
+		if (e.keyCode == '32' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.bMoving = true;
+				GetUniverse().MainBiController.controlledactor.BeginJump();
+			}
+        }	
+
+		//Attack Key F		
+		if (e.keyCode == '70' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.controlledactor.Attack();
+				GetUniverse().MainBiController.controlledactor.bHasPressedAttackButtton = true;
+			}
+        }		
+ 
+		//Defend Key G		
+		if (e.keyCode == '71' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{	
+				GetUniverse().MainBiController.controlledactor.ProtectBlockWithShield();
+			}
+        }		
+  
+ 
+    
+    }
+document.onkeyup = checkKeyUp;
+//ON RELASE
+function checkKeyUp(e) 
+{
+		if (e.keyCode == '37') //left cursor
+        {
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.controlledactor.bMoving = false;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+			}
+			//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x - 10 );	
+		
+        }
+		if (e.keyCode == '39') //right cursor
+        { 
+
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.controlledactor.bMoving = false;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = true;			
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x + 10 );
+			}	
+        }
+		
+		//Left Walk A key STOP 
+		if (e.keyCode == '65' )  
+        {  
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.controlledactor.bMoving = false;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x - 10 );	
+			}	
+        }	
+		
+		//Right Walk D key STOP 	
+		if (e.keyCode == '68' )  
+        {  
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{			
+				GetUniverse().MainBiController.controlledactor.bMoving = false;
+				GetUniverse().MainBiController.controlledactor.bGoingRight = true;			
+				//MainBiController.controlledactor.x = InterpolateNumbers( MainBiController.controlledactor.x ,  1, MainBiController.controlledactor.x + 10 );
+			}	
+        }				
+			
+		//Attack Key F		
+		if (e.keyCode == '70' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{		
+				GetUniverse().MainBiController.controlledactor.bHasPressedAttackButtton = false;			
+				GetUniverse().MainBiController.controlledactor.UnleashAttack();
+			}
+        }		
+		
+		
+			//?		
+		if (e.keyCode == '71' )  
+        { 
+			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+			{	
+			
+			}
+        }		
+  
+ 	
+		
+		
+		
+}
+	
+
+	
+//Desc: Aqusta funcio savisa tot el temps
+function draw(timestamp) 
+{	
+    requestAnimationFrame(draw);
+    deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
+
+
+		
+    //clean canvas screen
+    canvas.width=canvas.width;
+    //screen
+    ctx.beginPath();
+	ctx.scale(0.4, 0.4) // Doubles size of anything draw to canvas.
+	ctx.drawImage(BGImage,0,0,1,1,0,0,1280,900);//900 to then fit the whole thing	 //this is the backround Occupy whole screen
+
+	ctx.drawImage(COSImage, 10, 10);	 //this is the backround Occupy whole screen	
+	
+	//Debug style for the rectangle showing upfroint position
+	
+	if( GetUniverse().bDrawDebug ) 
+	{
+	
+	
+		/*
+		ctx.beginPath();
+		ctx.rect(GetUniverse().MainBiController.controlledactor.x+25, GetUniverse().MainBiController.controlledactor.y-30, 10, 10);
+		ctx.strokeStyle = "blue";	
+		ctx.stroke();	
+	
+		ctx.beginPath();	
+		ctx.rect(GetUniverse().MainBiController.controlledactor.x-25, GetUniverse().MainBiController.controlledactor.y-30, 10, 10);	
+		ctx.strokeStyle = "red";	
+		ctx.stroke();
+		*/
+	}
+		ctx.fillStyle = "green";	
+		ctx.font = "30px Arial";
+		//ctx.fillText("Hello world", 200, 200);
+		
+		ctx.fillStyle = "white";	
+		ctx.font = "20px Arial";
+	    ctx.fillText("PC Controls:", 1100, 90);
+		
+		ctx.fillStyle = "white";	
+		ctx.font = "20px Arial";
+	    ctx.fillText("F attack!", 1110, 125);
+		
+		ctx.fillStyle = "white";	
+		ctx.font = "20px Arial";
+	    ctx.fillText("G defend!", 1110, 150);
+		
+		ctx.fillStyle = "white";	
+		ctx.font = "20px Arial";
+	    ctx.fillText("ASDW move!", 1110, 175);		
+
+		ctx.fillStyle = "white";	
+		ctx.font = "20px Arial";
+	    ctx.fillText("Sapce bar jump!", 1110, 200);		
+
+
+		GetUniverse().actorsIngame.forEach(DrawActors);
+		
+		function DrawActors(value, index, array) 
+		{		
+			if(value.constructor.name != "Universe" && value.constructor.name != "BiController"  ) //value.level == ActualUniverse.level
+			{		
+				if( value.level == ActualUniverse.level ) //value.level == ActualUniverse.level
+				{
+					//ctx.fillStyle = 'blue'; //It does not give color to a image
+					ctx.drawImage(value.InternalTexture,0,0,value.ClippingImageSizeX,value.ClippingImageSizeY,value.x - value.XOffset, value.y - value.YOffset, value.DrawSizeX,value.DrawSizeY);
+					value.ActorTick(timestamp);
+				}
+				else
+				{
+					value.ActorTick(timestamp);
+				}
+
+			}
+			if( value.constructor.name == "BiController" ) 
+			{
+				value.ActorTick(timestamp);
+			}			
+        }		
+	
+	
+		GetUniverse().floatingtexts.forEach(DrawFoatingTextes);
+		
+		function DrawFoatingTextes(value, index, array)
+		{	
+				if( value.textlevel == GetUniverse().level ) //value.level == ActualUniverse.level
+				{
+					ctx.fillStyle = value.textcolor; //It does not give color to a image
+					ctx.font = "30px Arial";
+					ctx.fillText(value.floatingtext, value.x, value.y);
+					value.TextTick(timestamp);
+				}			
+		}
+			
+	lastTimestamp = timestamp;	
+} //End draw
+	
+	
+//Desc: Neongho:Global mathemathical function
+function DoesThisCollide( originX, originY, SizeXMin1, SizeYMin1, SizeXMax1, SizeYMax1  ) 	
+{
+
+	if( originX < SizeXMax1 ) //First X
+	{ 
+		if( originX > SizeXMin1 ) 
+		{ 
+			if( originY < SizeYMax1) //Then Y 
+			{
+				if(  originY > SizeYMin1 ) 
+				{	
+					return true;
+				} 
+			}
+		} 	
+	} 
+
+	return false;
+}
+
+function DoBladeCollisionCheck(ActorSwinging, DistanceOfBlade)
+{
+	let AllActorsToBladeCheck = GetAllActorsIngame();
+
+
+		AllActorsToBladeCheck.forEach(CheckIfItHits);
+		
+		function CheckIfItHits(value, index, array) 	
+		{
+			ReturnDistanceFromTwoActors(ActorSwinging, value);
+	
+			if( IsActorFacingOtherActor(ActorSwinging, value) && ReturnDistanceFromTwoActors(ActorSwinging, value) < DistanceOfBlade && value.constructor.name == "Pawn" && value.level == ActorSwinging.level ) 
+			{ 
+				if( value != ActorSwinging ) 
+				{
+					ActorSwinging.ProcessHits(value);
+				}
+			}
+		}
+		
+}
+
+function ReturnDistanceFromTwoActors(Actor1, Actor2)
+{
+	
+	return ReturnDistanceFromTwoPoints( Actor1.x, Actor2.x, Actor1.y, Actor2.y  );
+	
+}
+
+function ReturnDistanceFromTwoPoints(Vec1x, Vec1y, Vec2x, Vec2y)
+{
+	return Math.abs( ( ( Vec1x - Vec2x ) - ( Vec1y - Vec2y ) ) );
+	
+}
+
+function IsActorFacingOtherActor(Actor1, Actor2)
+{
+
+	if( ( Actor1.bMovingLeft && ReturnDirectionActorsDegrees(Actor1, Actor2) >= 0 ) || ( !Actor1.bMovingLeft && ReturnDirectionActorsDegrees(Actor1, Actor2) <= 0 ) )
+	{
+		return true;
+	}
+	else
+	{ 
+		return false;
+	}
+	
+}
+
+//WIP
+function IsActorLookingOtherActor(Actor1, Actor2)
+{
+
+	if( ( Actor1.bMovingLeft && ReturnDirectionActorsDegrees(Actor1, Actor2) >= 0 ) || ( !Actor1.bMovingLeft && ReturnDirectionActorsDegrees(Actor1, Actor2) <= 0 ) )
+	{
+		return true;
+	}
+	else
+	{ 
+		return false;
+	}
+	
+}
+
+
+
+//Desc: Neongho: To then step on it or so use outer or from 180 to -180 if happends to be exactly 0 or so on the feet then step on it
+function ReturnDirectionActors(Actor1, Actor2)
+{							//Change the value that means that this is Up or down, later on use actor height or the collision
+	return Actor1.y - ( Actor2.y - 75 );
+}
+
+//Desc: This will return in non degrees the angle, WIP work on progress
+//Good only to distinct from left to right
+function ReturnDirectionActorsDegrees(Actor1, Actor2)
+{	
+	let DotProductOfTwo;
+	let Determinant;
+		
+    //First dot product 
+    DotProductOfTwo = Actor1.x * Actor2.x + Actor1.y * Actor2.y;
+    //First determinant idk what it is exactly 
+    Determinant = Actor1.x * Actor2.y - Actor1.y * Actor2.x;
+    
+	//Change the value that means that this is Up or down, later on use actor height or the collision
+
+	return Math.atan2(Determinant,  DotProductOfTwo);
+}
+
+//Desc: Neongho: translates a number into the direction which returns true or false just left or just right
+function TranslateNumToUpOrDown(DirNum)
+{
+	return DirNum < 0;	
+}
+
+//Desc: Neongho: Interpolate does not work so well 
+function InterpolateNumbers(ActualNumber, InterpSpeed, FinalNumber )
+{
+    return Math.round(ActualNumber + ( FinalNumber - ActualNumber ) * InterpSpeed );
+}
+
+function GetUniverse()
+{
+	return ActualUniverse;	
+}
+
+
+//Try to send the player controller into universe
+function GetPlayerController()
+{
+	return GetUniverse().MainBiController;	
+}
+
+//Try to send the player controller into universe
+function GetPlayerPawn()
+{
+	return GetUniverse().MainCharacter;	
+}
+
+
+function GetClosestActorToActor(ActorSelf)
+{
+	let ActorsToIterate = [];
+
+	ActorsToIterate = GetAllActorsIngame();	
+}
+
+function GetAllActorsIngame()
+{
+	return GetUniverse().actorsIngame;	
+}
+
+function GetRandomBoolean()
+{
+	let booleanValue;
+	
+	if ( Math.random() > 0.5 )
+	{
+	  booleanValue = true;
+	} 
+	else 
+	{
+	  booleanValue = false;  
+	}	
+	
+	return booleanValue;
+}
+
+
+function GetRandomFloat(min, max, decimals)
+{
+	const str = (Math.random() * (max - min) + min).toFixed(decimals);
+
+	return parseFloat(str);
+}
+
+function ButtonMoveRightPressed()
+{
+	GetUniverse().MainBiController.controlledactor.bMoving = true;
+	GetUniverse().MainBiController.controlledactor.bGoingRight = true;	
+	GetUniverse().MainBiController.controlledactor.ChangeDirection(false);	
+}
+
+function ButtonMoveRightUnPressed()
+{
+
+	GetUniverse().MainBiController.controlledactor.bMoving = false;
+	GetUniverse().MainBiController.controlledactor.bGoingRight = false;		
+
+}
+
+function ButtonMoveLeftPressed()
+{
+    GetUniverse().MainBiController.controlledactor.bMoving = true;
+	GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+	GetUniverse().MainBiController.controlledactor.ChangeDirection(true);	
+}
+
+function ButtonMoveLeftUnPressed()
+{
+    GetUniverse().MainBiController.controlledactor.bMoving = false;
+	GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+}
+
+//New buttons
+function buttonenter()
+{
+	GetUniverse().MainBiController.controlledactor.bMoving = true;
+	GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
+	GetUniverse().MainBiController.controlledactor.ChangeDirection(true);	
+}
+
+function ButtonJumpButtonPressed()
+{
+	if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+	{			
+		GetUniverse().MainBiController.bMoving = true;
+		GetUniverse().MainBiController.controlledactor.BeginJump();
+	}
+}
+
+
+function AttackButtonPressed()
+{
+
+		if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+		{			
+			GetUniverse().MainBiController.controlledactor.Attack();
+			GetUniverse().MainBiController.controlledactor.bHasPressedAttackButtton = true;
+		}
+	
+}
+
+function AttackButtonUnPressed()
+{
+	
+	if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+	{		
+		GetUniverse().MainBiController.controlledactor.bHasPressedAttackButtton = false;			
+		GetUniverse().MainBiController.controlledactor.UnleashAttack();
+	}
+
+}
+
+function DefendButtonPressed()
+{
+	
+	if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
+	{	
+		GetUniverse().MainBiController.controlledactor.ProtectBlockWithShield();
+	}
+
+}
+
+
+</script>
+
+
+
+</html>
