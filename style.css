@@ -34,11 +34,11 @@
         transform: translate(-50%, -50%);
         -webkit-transform: translate(-50%, -50%);
         width: 505px;
-        height: 305px;
+        height: 320px;
         margin: 0;
         padding: 0;
         position: relative;
-        border: 1px solid white;
+        
         }
     }
 

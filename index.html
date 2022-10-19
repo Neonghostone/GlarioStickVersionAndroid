@@ -14,10 +14,10 @@
 </head>
 <body onload="">
 	<div class="maindiv" id="maindiv">
-	<div class="canvasdiv" id="canvasdiv">
-		<canvas class="canvas"id="canvas" width="640" height="360">
-		Your web browser does not support canvas.
-		</canvas>
+		<div class="canvasdiv" id="canvasdiv">
+			<canvas class="canvas"id="canvas" width="1000" height="500">
+			Your web browser does not support canvas.
+			</canvas>
 			<button class='LeftButton'  ontouchstart='ButtonMoveLeftPressed();' ontouchend='ButtonMoveLeftUnPressed();' style='position:fixed; top:100px; left: 20px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
 				<canvas class="MoveLeftButtonCanvas"id="MoveLeftButtonCanvas" width="50" height="50">
 				</canvas>
@@ -40,15 +40,13 @@
 			</button>				
 			
 			
-			<button onclick="ButtonMoveRightPressed()"> This is a button for advance right</button>
-			<button> This is a button for advance left</button>
+			<!-- <button onclick="ButtonMoveRightPressed()"> This is a button for advance right</button> -->
+			<!-- <button> This is a button for advance left</button> -->
 		</div>
 	</div><!-- maindiv -->
 </body>
 <script type="text/javascript">
-//onclick='ButtonMoveRightPressed();'
-//<meta name="viewport" content="width=device-width, initial-scale=0, maximum-scale=1, user-scalable=0">
-//<meta name="viewport" content="width=device-width, initial-scale=-5.0, minimum-scale = -5.0, user-scalable=-5.0"
+
         /*    
         @licstart  The following is the entire license notice for the 
         JavaScript code in this page.
@@ -95,7 +93,6 @@
 //Bug sometimes the persecution mode does not work 
 //Make jumping AI on you trying to damage you
 //Cooldown for the jump
-//Jump stun on top of enemy
 //Make health bar
 
 
@@ -109,6 +106,9 @@ var TestPlatform=new Image();
 //Backround image for all the levels
 var BGImage=new Image();
 var COSImage=new Image();
+var MainSoundtrack = new Audio('MainMusic.ogg'); //WIP 
+//MainSoundtrack.play(); It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
+//MainSoundtrack.loop = true; 
 
 
 var EnemyCharacterStageOne;
@@ -290,7 +290,7 @@ class Actor
 		this.MinPrepareAttackDuration = 500;			
 		this.AttackDuration = 500;	
 		this.bHasPressedAttackButtton = false;
-
+		this.bHasHealthBarsOnHead = false;
 
 		this.BlockingDuration = 1500;	
 		this.CooldownOfBlockDuration = 1000;
@@ -338,7 +338,15 @@ class Actor
 
 	}
 	
+	DrawHealthAndOtherBars()
+	{
+		ctx.beginPath();
+		ctx.fillStyle = "red";			
+		ctx.fillRect( ( this.x + this.XOriginOffset ) -25 , ( this.y + this.YOriginOffset ) - 125, this.ActorHealth, 10);
+		//ctx.stroke();
+	}
 	
+
 	SetOffensiveState(ActorNewOffensiveState)
 	{
 		this.OffensiveState = ActorNewOffensiveState;
@@ -407,7 +415,7 @@ class Actor
 		if( this.ActorState != "Jumping"  && this.ActorState != "TotallyStunned" ) 
 		{
 		
-			setTimeout( this.JumpAlreadyStarted.bind(this), 150 );	
+			setTimeout( this.JumpAlreadyStarted.bind(this), 225 );	
 			this.bCanStopJumpNow = false;		
 			
 			this.SetState("Jumping");
@@ -595,6 +603,13 @@ class Actor
 		{
 			this.DrawDebugStuff();
 		}
+		
+		if( this.level == GetUniverse().level && this.bHasHealthBarsOnHead )
+		{
+			this.DrawHealthAndOtherBars();
+		}		
+		
+		
 
 		if( this.bHasCollision )
 		{	
@@ -1337,6 +1352,7 @@ class BiController extends Actor
 					if( !this.bIsOpponentInAnotherLevel() ) 
 					{
 						this.MoveToLocation( this.Opponent.x, this.Opponent.y );
+						this.controlledactor.BeginJump();
 					}
 					else
 					{
@@ -1705,7 +1721,7 @@ function BeginPlay()
 		
 		var ButtonOfCanvasMoveLeft = document.getElementById('MoveLeftButtonCanvas');
 	
-
+	
 		
 		if (ButtonOfCanvasMoveLeft.getContext) 
 		{
@@ -1842,10 +1858,13 @@ function BeginPlay()
 		
 		GetUniverse().MainCharacter.collisionSizeMinX1 = -50;
 		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
-		GetUniverse().MainCharacter.collisionSizeMaxX1 = 50;
+		GetUniverse().MainCharacter.collisionSizeMaxX1 = 60;
 		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
 		GetUniverse().MainCharacter.XOriginOffset = 50; //So we set land distance when walking, draws			
 		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
+		
+		GetUniverse().MainCharacter.bHasHealthBarsOnHead = true;
+		
 		
 		EnemyCharacterStageOne = spawnActor('EnemeyStageOneNumberOne', 300, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
 		0 ,10000, 1, 1, false
@@ -1862,11 +1881,13 @@ function BeginPlay()
 		
 		EnemyCharacterStageOne.collisionSizeMinX1 = -50;
 		EnemyCharacterStageOne.collisionSizeMinY1 = -100;
-		EnemyCharacterStageOne.collisionSizeMaxX1 = 70;
+		EnemyCharacterStageOne.collisionSizeMaxX1 = 90;
 		EnemyCharacterStageOne.collisionSizeMaxY1 = 30;	
 		EnemyCharacterStageOne.XOriginOffset = 50; //So we set land distance when walking, draws			
 		EnemyCharacterStageOne.YOriginOffset = 100; //So we set land distance when walking, draws		
-						
+			
+		EnemyCharacterStageOne.bHasHealthBarsOnHead = true;		
+				
 			
 		
 		/*
@@ -2092,12 +2113,12 @@ function BeginPlay()
 		
 		EnemyCharacterStageTwo.collisionSizeMinX1 = -50;
 		EnemyCharacterStageTwo.collisionSizeMinY1 = -100;
-		EnemyCharacterStageTwo.collisionSizeMaxX1 = 70;
+		EnemyCharacterStageTwo.collisionSizeMaxX1 = 90;
 		EnemyCharacterStageTwo.collisionSizeMaxY1 = 30;	
 		EnemyCharacterStageTwo.XOriginOffset = 50; //So we set land distance when walking, draws			
 		EnemyCharacterStageTwo.YOriginOffset = 100; //So we set land distance when walking, draws		
 						
-	
+		EnemyCharacterStageTwo.bHasHealthBarsOnHead = true;
 
 	
 		//function spawnActor(name, x,y, team, mainTexture, actorClass, ControlledActor, LifeTimeOfActor, ActorInitialSpeedX, ActorInitialSpeedY, bIsPlayerControlled, pcollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, pDrawSizeX, pDrawSizeY, pClippingImageSizeX, pClippingImageSizeY)
@@ -2159,6 +2180,7 @@ function checkKeyDown(e) //Interpolating with no purpose!
         { 
 			if( GetUniverse().MainBiController.controlledactor.ActorState != 'Dead' )
 			{
+
 				GetUniverse().MainBiController.controlledactor.bMoving = true;
 				GetUniverse().MainBiController.controlledactor.bGoingRight = false;	
 				GetUniverse().MainBiController.controlledactor.ChangeDirection(true);
@@ -2309,22 +2331,25 @@ function checkKeyUp(e)
 	
 
 	
-//Desc: Aqusta funcio savisa tot el temps
+//Desc: Aquesta funcio savisa tot el temps
 function draw(timestamp) 
 {	
     requestAnimationFrame(draw);
     deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
 
 
-		
+
     //clean canvas screen
     canvas.width=canvas.width;
     //screen
     ctx.beginPath();
-	ctx.scale(0.4, 0.4) // Doubles size of anything draw to canvas.
+	ctx.scale(0.5, 0.5) // Doubles size of anything draw to canvas.
 	ctx.drawImage(BGImage,0,0,1,1,0,0,1280,900);//900 to then fit the whole thing	 //this is the backround Occupy whole screen
-
+	//ctx.rotate(-90 * Math.PI / 180); //works as way to rotate all the actors
 	ctx.drawImage(COSImage, 10, 10);	 //this is the backround Occupy whole screen	
+	
+	
+	
 	
 	//Debug style for the rectangle showing upfroint position
 	
