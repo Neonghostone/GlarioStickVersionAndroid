@@ -7,7 +7,7 @@
 	<meta name="title" content="Gladiators">
 	<meta name="description" content="Game">
 	
-	<button onclick="MoveRight()"> This is a button </button>
+	<!-- <button onclick="MoveRight()"> This is a button </button> -->
 	<link rel="icon" type="image/png" href="glario.png"> 
 	<link rel="stylesheet" type="text/css" href="style.css"> 
 	<link rel="manifest" href="manifest.manifest">
@@ -96,6 +96,13 @@
 //Make health bar
 
 
+//Essential
+//Make sure that the size of canvas is right adjust a bit but might be good 
+//Make the new level as default
+//Make the menu
+
+//Collision Very important bugs
+//-Create teleporting i case we are colliding for ever
 
 
 //Demonstration images
@@ -112,7 +119,7 @@ var MainSoundtrack = new Audio('MainMusic.ogg'); //WIP
 
 
 var EnemyCharacterStageOne;
-var SpeedOfMainCharacterDebug = 5;
+var SpeedOfMainCharacter = 5;
 
 
 
@@ -311,6 +318,24 @@ class Actor
 		
 	}
 	
+	//Desc: to perform spacing and such
+	OverlapingWithSomeOtherActor( ActorOverlappingWith ) 
+	{ 
+		
+		for(let I = 0; I < ActorOverlappingWith.length; I++) 
+		{
+			if(ActorOverlappingWith[I].constructor.name == "Pawn" && this.constructor.name != "Actor")  
+			{
+				if( ReturnDirectionActorsDegrees(this, ActorOverlappingWith[I] ) > 0 )
+				this.x += 0.75;
+				else
+				this.x -= 0.75;
+		
+			}
+		} 
+	
+	}
+	
 	DrawDebugStuff()
 	{
 		//draw its origin
@@ -492,8 +517,8 @@ class Actor
 		
 		function CheckCollisionForActorsInFunction(value, index, array) 
 		{	
-			//&& value.constructor.name != "Pawn"
-			if( value != self && value.level == self.level && value.bHasCollision  ) 
+			//&& value.constructor.name != "Pawn"									//Don't collide with dead people
+			if( value != self && value.level == self.level && value.bHasCollision && ( value.ActorState != 'Dead' )  ) 
 			{
 				if( DoesThisCollide( self.x + self.XOriginOffset, self.y + self.YOriginOffset, 
 				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
@@ -523,7 +548,7 @@ class Actor
 		function CheckCollisionForActorsInFunction(value, index, array) 
 		{	
 			//&& value.constructor.name != "Pawn"
-			if( value != self && value.level == self.level && value.bHasCollision   ) 
+			if( value != self && value.level == self.level && value.bHasCollision && ( value.ActorState != 'Dead' )   ) 
 			{
 				if( DoesThisCollide( self.x + self.XOriginOffset + 20, self.y + self.YOriginOffset - 20, 
 				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
@@ -552,7 +577,7 @@ class Actor
 		function CheckCollisionForActorsInFunction(value, index, array) 
 		{	
 			//&& value.constructor.name != "Pawn"
-			if( value != self && value.level == self.level && value.bHasCollision   ) 
+			if( value != self && value.level == self.level && value.bHasCollision && ( value.ActorState != 'Dead' )   ) 
 			{
 				if( DoesThisCollide( self.x + self.XOriginOffset - 20, self.y + self.YOriginOffset - 20, 
 				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
@@ -614,8 +639,19 @@ class Actor
 		if( this.bHasCollision )
 		{	
 			ArrayOfActorsColliding = this.isActorCollidingWithSomething();
-			ArrayOfActorsCollidingRight = this.isActorCollidingWithSomethingRightSide();		
-		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide();	
+			
+			if( ArrayOfActorsColliding.length > 0) 
+			{ 
+				this.OverlapingWithSomeOtherActor( ArrayOfActorsColliding );
+			} 
+			
+			
+			ArrayOfActorsCollidingRight = this.isActorCollidingWithSomethingRightSide();	
+			
+			
+		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide();
+			
+			
 		}
 
 
@@ -643,27 +679,14 @@ class Actor
 
 		if(this.bMoving ) 
 		{ 
-			if( this.name == "MulliusMainChar" ) 
-			{
-				if( ArrayOfActorsCollidingLeft.length > 0)
-				{	
-				
-				}
-
-				if( ArrayOfActorsCollidingRight.length > 0)
-				{					
-
-				}	
-			}
-	
 	
 			if(this.bGoingRight && ArrayOfActorsCollidingRight.length <= 0 && this.ActorState != "Bouncing" && this.ActorState != "TotallyStunned" &&  this.ActorState != "Dead" ) 
 			{
-				this.x += SpeedOfMainCharacterDebug; 
+				this.x += SpeedOfMainCharacter; 
 			} 
 			if(!this.bGoingRight && ArrayOfActorsCollidingLeft.length <= 0 && this.ActorState != "Bouncing" && this.ActorState != "TotallyStunned" &&  this.ActorState != "Dead"  )
 			{ 
-				this.x -= SpeedOfMainCharacterDebug;	
+				this.x -= SpeedOfMainCharacter;	
 			}
 		}
 		
@@ -758,12 +781,11 @@ class Actor
 			
 			
 
-					
-					if( this.ActorState != "Jumping" && this.ActorState != "Bouncing"  && this.ActorState != "Dead"  ) 
-					{ 
-						this.SetState("Jumping");
-						this.bCanStopJumpNow = true;
-					}
+			if( this.ActorState != "Jumping" && this.ActorState != "Bouncing"  && this.ActorState != "Dead"  ) 
+			{ 
+				this.SetState("Jumping");
+				this.bCanStopJumpNow = true;
+			}
 							
 			
 			/* left here just in case
@@ -1123,7 +1145,8 @@ class Actor
 	TakeDamage(DamageToTake)
 	{
 		this.SpawnBlood();
-		this.ActorHealth -= DamageToTake;
+		
+		this.ActorHealth = clamp( this.ActorHealth -= DamageToTake, 0, 10000 );
 		
 		GetUniverse().InstanceGameplayFloatingText(this.x, this.y, DamageToTake+" Damage", DamageToTake*1000, 'red', DamageToTake/10, this.level);
 		
@@ -1153,8 +1176,8 @@ class Actor
 	{
 		if( this.ActorState != 'Dead' ) 
 		{
-			this.SetCollision( false );
-			this.SetCustomGravity( 0.0 );	 //Avoid having gravity		
+			//this.SetCollision( false );
+			//this.SetCustomGravity( 0.0 );	 //Avoid having gravity		
 			this.SetState('Dead');
 			this.PawnController.SetState('DeadPawn');
 			console.log( this.name + " Dies ");
@@ -1206,7 +1229,10 @@ class BiController extends Actor
 		this.HandleOfAggTick = null;
 		this.bInputDisabled = false; //WIP this will disable the player to use input example while on conversation
 		this.bShouldBeAbleToTravelLevels = true; //WIP so they wont go to othe levels
-		
+		this.AIJumpCooldownMin = 4000.0; //WIP how long will it stay without jumping each time	
+		this.AIJumpCooldownMax = 7000.0; //WIP how long will it stay without jumping each time
+		this.HandleOfAIJump = null;	
+
 		this.HandleOfMovTick = setInterval(this.MovementTick.bind(this), 1000); //Use bind this use it for the rest, and posses the monster
 		this.HandleOfAttTick = setInterval(this.AttentionTick.bind(this), 1000);
 		this.HandleOfDefTick = setInterval(this.DefenseTick.bind(this), 1000);
@@ -1272,8 +1298,6 @@ class BiController extends Actor
 		return 1000 * finalDiffNum;  
 		
 	}
-  
-	
  
 	SetDesiredLocation(PDesiredLocToGoX, PDesiredLocToGoY)
 	{
@@ -1309,6 +1333,7 @@ class BiController extends Actor
 		}
 	}		
    
+  
  	MoveStop()
 	{
 		this.controlledactor.bMoving = false; 
@@ -1328,7 +1353,18 @@ class BiController extends Actor
 		this.controlledactor.ChangeDirection(true);
 	}
    
+    PerformJump()
+	{
+		this.MoveToLocation( this.Opponent.x, this.Opponent.y );
+		this.controlledactor.BeginJump();		
+		this.HandleOfAIJumpCooldown = setInterval( this.JumpingCooldownComplete.bind(this), GetRandomFloat( this.AIJumpCooldownMax, this.AIJumpCooldownMax, 3  )  );
+	}
    
+ 	JumpingCooldownComplete()
+	{
+		clearInterval(this.HandleOfAIJumpCooldown);	
+		this.HandleOfAIJumpCooldown = null;
+	}
    
 	MovementTick()
 	{ 
@@ -1349,10 +1385,15 @@ class BiController extends Actor
 				if(  this.ActorState == "FightingOpponent"  ) 
 				{
 					
+
+					if( this.HandleOfAIJumpCooldown == null) 
+					{
+						this.PerformJump();
+					}	
+					
 					if( !this.bIsOpponentInAnotherLevel() ) 
 					{
-						this.MoveToLocation( this.Opponent.x, this.Opponent.y );
-						this.controlledactor.BeginJump();
+						this.MoveToLocation( this.Opponent.x, this.Opponent.y  );
 					}
 					else
 					{
@@ -1835,6 +1876,16 @@ function BeginPlay()
 		//Buttons here---------------------------------> //	
 	
 	
+			
+	}
+	
+	CreateLevel();//WIP for now no params or anything
+}                      
+
+//Creates the level that you want
+function CreateLevel()
+{
+	
 		//Examples of assigning images to stuff SOme references delete this*
 		gladiatorTest.setAttribute("src", "Mullius.png");
 		BGImage.setAttribute("src", "Bacrkound.png");
@@ -1879,11 +1930,11 @@ function BeginPlay()
 		EnemyCharacterStageOne.ClippingImageSizeY = 128.0;		
 		EnemyCharacterStageOne.YOffset = +20; //Draw offset		
 		
-		EnemyCharacterStageOne.collisionSizeMinX1 = -50;
+		EnemyCharacterStageOne.collisionSizeMinX1 = -50; //blue min
 		EnemyCharacterStageOne.collisionSizeMinY1 = -100;
-		EnemyCharacterStageOne.collisionSizeMaxX1 = 90;
+		EnemyCharacterStageOne.collisionSizeMaxX1 = 50; //red max
 		EnemyCharacterStageOne.collisionSizeMaxY1 = 30;	
-		EnemyCharacterStageOne.XOriginOffset = 50; //So we set land distance when walking, draws			
+		EnemyCharacterStageOne.XOriginOffset = 65; //So we set land distance when walking, draws			
 		EnemyCharacterStageOne.YOriginOffset = 100; //So we set land distance when walking, draws		
 			
 		EnemyCharacterStageOne.bHasHealthBarsOnHead = true;		
@@ -2083,13 +2134,13 @@ function BeginPlay()
 		EnemyCharacterStageOne.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
 		EnemyCharacterStageOne.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
 				
-			//AIController
+		//AIController
 		AIBiController1 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
 		EnemyCharacterStageOne,100000,0,0,false );   //Controller bi so both for player and others
 		AIBiController1.SetState("AIGladiatorRoamLookFor");
 		AIBiController1.posses(EnemyCharacterStageOne) //Posses by player controller					//Collisions -X -Y X Y 
 		AIBiController1.SetResetDifficulty(-1.5); //Enemy 1 should be easy
-		
+
 		
 		//AIController
 		AIBiController2 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
@@ -2110,14 +2161,14 @@ function BeginPlay()
 		EnemyCharacterStageTwo.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
 		EnemyCharacterStageTwo.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
 		EnemyCharacterStageTwo.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
-		
-		EnemyCharacterStageTwo.collisionSizeMinX1 = -50;
+	
+		EnemyCharacterStageTwo.collisionSizeMinX1 = -50; //blue min
 		EnemyCharacterStageTwo.collisionSizeMinY1 = -100;
-		EnemyCharacterStageTwo.collisionSizeMaxX1 = 90;
+		EnemyCharacterStageTwo.collisionSizeMaxX1 = 50; //red max
 		EnemyCharacterStageTwo.collisionSizeMaxY1 = 30;	
-		EnemyCharacterStageTwo.XOriginOffset = 50; //So we set land distance when walking, draws			
-		EnemyCharacterStageTwo.YOriginOffset = 100; //So we set land distance when walking, draws		
-						
+		EnemyCharacterStageTwo.XOriginOffset = 65; //So we set land distance when walking, draws			
+		EnemyCharacterStageTwo.YOriginOffset = 100; //So we set land distance when walking, draws	
+					
 		EnemyCharacterStageTwo.bHasHealthBarsOnHead = true;
 
 	
@@ -2127,10 +2178,9 @@ function BeginPlay()
 				
 		
 		//spawnActor('Plataforma', 75, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
-		//spawnActor('Plataforma', 100, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1			
-	}
-}                      
-
+		//spawnActor('Plataforma', 100, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
+	
+}
 	
 function addLoadEvent(func) 
 {
@@ -2690,6 +2740,13 @@ function DefendButtonPressed()
 	}
 
 }
+
+function clamp(number, min, max) 
+{
+	return Math.max(min, Math.min(number, max));
+}
+
+
 
 
 </script>
