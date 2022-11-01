@@ -138,7 +138,7 @@ class Universe
 		this.bDrawDebug = false;
 		this.floatingtexts = [];
 		this.MinLevel = -1;
-		this.MaxLevel = 2;		
+		this.MaxLevel = 3;		
 		
 	} 
 
@@ -327,10 +327,9 @@ class Actor
 			if(ActorOverlappingWith[I].constructor.name == "Pawn" && this.constructor.name != "Actor")  
 			{
 				if( ReturnDirectionActorsDegrees(this, ActorOverlappingWith[I] ) > 0 )
-				this.x += 0.75;
+					this.x += 0.75;
 				else
-				this.x -= 0.75;
-		
+					this.x -= 0.75;
 			}
 		} 
 	
@@ -1917,27 +1916,11 @@ function CreateLevel()
 		GetUniverse().MainCharacter.bHasHealthBarsOnHead = true;
 		
 		
-		EnemyCharacterStageOne = spawnActor('EnemeyStageOneNumberOne', 300, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
-		0 ,10000, 1, 1, false
-		,"normal", 0
-		);   //Enemy to kill 1
+
 		
-		//Add the draw size and such to it
+	
 		
-		EnemyCharacterStageOne.DrawSizeX = 150;
-		EnemyCharacterStageOne.DrawSizeY = 150;			
-		EnemyCharacterStageOne.ClippingImageSizeX = 128.0;
-		EnemyCharacterStageOne.ClippingImageSizeY = 128.0;		
-		EnemyCharacterStageOne.YOffset = +20; //Draw offset		
-		
-		EnemyCharacterStageOne.collisionSizeMinX1 = -50; //blue min
-		EnemyCharacterStageOne.collisionSizeMinY1 = -100;
-		EnemyCharacterStageOne.collisionSizeMaxX1 = 50; //red max
-		EnemyCharacterStageOne.collisionSizeMaxY1 = 30;	
-		EnemyCharacterStageOne.XOriginOffset = 65; //So we set land distance when walking, draws			
-		EnemyCharacterStageOne.YOriginOffset = 100; //So we set land distance when walking, draws		
-			
-		EnemyCharacterStageOne.bHasHealthBarsOnHead = true;		
+
 				
 			
 		
@@ -2018,9 +2001,13 @@ function CreateLevel()
 		,0 ,10000, 1, 1, false, 
 		 "normal", 0 );   //Platform 3 level 0	
 		
+		spawnActor('Plataforma4Level0', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0				
+		
 		spawnActor('Plataforma4Level0', 700, 600, 2, "Platform.png", "Actor"
 		,0 ,10000, 1, 1, false, 
-		 "normal", 0 );   //Platform 4 level 0			
+		 "normal", 0 );   //Platform 4 level 0					
 		
 		spawnActor('Plataforma5Level0', -175, 600, 2, "Platform.png", "Actor",
 		0 ,10000, 1, 1, false, 
@@ -2050,7 +2037,7 @@ function CreateLevel()
 		,0 ,10000, 1, 1, false, 
 		 "normal", 1 );   //Platform 1 level 1	
 	
-		spawnActor('Plataforma2Level2', 200, 600, 2, "Platform.png", "Actor"
+		spawnActor('Plataforma2Level2', 100, 600, 2, "Platform.png", "Actor"
 		,0 ,10000, 1, 1, false, 
 		 "normal", 1 );   //Platform 1 level 1			
 		
@@ -2090,15 +2077,15 @@ function CreateLevel()
 		,0 ,10000, 1, 1, false, 
 		 "normal", 2 );   //Platform 1 level 2	
 	
-		spawnActor('Plataforma2Level3', 200, 600, 2, "Platform.png", "Actor"
+		spawnActor('Plataforma2Level3', 200, 650, 2, "Platform.png", "Actor"
 		,0 ,10000, 1, 1, false, 
 		 "normal", 2 );   //Platform 1 level 2			
 		
-		spawnActor('Plataforma3Level3', 400, 600, 2, "Platform.png", "Actor"
+		spawnActor('Plataforma3Level3', 400, 700, 2, "Platform.png", "Actor"
 		,0 ,10000, 1, 1, false, 
 		 "normal", 2 );   //Platform 1 level 2			
 				
-		spawnActor('Plataforma4Level3', 600, 600, 2, "Platform.png", "Actor"
+		spawnActor('Plataforma4Level3', 600, 750, 2, "Platform.png", "Actor"
 		,0 ,10000, 1, 1, false, 
 		 "normal", 2 );   //Platform 1 level 2			
 						
@@ -2115,10 +2102,67 @@ function CreateLevel()
 		 "normal", 2 );   //Platform 1 level 2			
 								
 	
+		//Next level 4
+		spawnActor('Plataforma1Level4', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2	
+	
+		spawnActor('Plataforma2Level4', 200, 550, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2			
+		
+		spawnActor('Plataforma3Level4', 400, 500, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2			
+				
+		spawnActor('Plataforma4Level4', 600, 450, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2			
+						
+		spawnActor('Plataforma5Level4', 800, 500, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2			
+
+		spawnActor('Plataforma6Level4', 1000, 550, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2			
+										
+		spawnActor('Plataforma7Level4', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 3 );   //Platform 1 level 2		
+	
+		//Enemies spawning make function spawn enemy with params
+	
+		EnemyCharacterStageOne = spawnActor('EnemeyStageOneNumberOne', 300, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 0
+		);   //Enemy to kill 1
+		
 		EnemyCharacterStageTwo = spawnActor('EnemeyStage2', 1000, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
 		0 ,10000, 1, 1, false,
 		"normal", 1
-		);   //Enemy to kill 1		
+		);   //Enemy to kill 2				
+		
+		EnemyCharacterStageThree = spawnActor('EnemeyStageOneNumberThree', 300, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 2
+		);   //Enemy to kill 3		
+
+		
+		//AIController
+		AIBiController1 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageOne,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController1.SetState("AIGladiatorRoamLookFor");
+		AIBiController1.posses(EnemyCharacterStageOne) //Posses by player controller					//Collisions -X -Y X Y 
+		AIBiController1.SetResetDifficulty(-2.5); //Enemy 1 should be easy
+		
+		//AIController
+		AIBiController2 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageTwo,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController2.posses(EnemyCharacterStageTwo) //Posses by player controller					//Collisions -X -Y X Y 	
+		AIBiController2.SetState("AIGladiatorRoamLookFor");		
+		AIBiController2.SetResetDifficulty(-1.25); //Not that retarded as the first one 			
+		
 		
 		//Textures
 		//The idle one is already included
@@ -2134,20 +2178,33 @@ function CreateLevel()
 		EnemyCharacterStageOne.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
 		EnemyCharacterStageOne.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
 				
-		//AIController
-		AIBiController1 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
-		EnemyCharacterStageOne,100000,0,0,false );   //Controller bi so both for player and others
-		AIBiController1.SetState("AIGladiatorRoamLookFor");
-		AIBiController1.posses(EnemyCharacterStageOne) //Posses by player controller					//Collisions -X -Y X Y 
-		AIBiController1.SetResetDifficulty(-1.5); //Enemy 1 should be easy
-
+				
+		//Add the draw size and such to it
 		
-		//AIController
-		AIBiController2 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
-		EnemyCharacterStageTwo,100000,0,0,false );   //Controller bi so both for player and others
-		AIBiController2.posses(EnemyCharacterStageTwo) //Posses by player controller					//Collisions -X -Y X Y 	
-		AIBiController2.SetState("AIGladiatorRoamLookFor");		
-		AIBiController2.SetResetDifficulty(-1.25); //Not that retarded as the first one 	
+		EnemyCharacterStageOne.DrawSizeX = 150;
+		EnemyCharacterStageOne.DrawSizeY = 150;			
+		EnemyCharacterStageOne.ClippingImageSizeX = 128.0;
+		EnemyCharacterStageOne.ClippingImageSizeY = 128.0;		
+		EnemyCharacterStageOne.YOffset = +20; //Draw offset		
+		
+		EnemyCharacterStageOne.collisionSizeMinX1 = -50; //blue min
+		EnemyCharacterStageOne.collisionSizeMinY1 = -100;
+		EnemyCharacterStageOne.collisionSizeMaxX1 = 50; //red max
+		EnemyCharacterStageOne.collisionSizeMaxY1 = 30;	
+		EnemyCharacterStageOne.XOriginOffset = 65; //So we set land distance when walking, draws			
+		EnemyCharacterStageOne.YOriginOffset = 100; //So we set land distance when walking, draws		
+			
+		EnemyCharacterStageOne.bHasHealthBarsOnHead = true;						
+				
+		
+			//AIController
+		AIBiController3 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageThree,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController3.posses(EnemyCharacterStageThree) //Posses by player controller					//Collisions -X -Y X Y 	
+		AIBiController3.SetState("AIGladiatorRoamLookFor");		
+		AIBiController3.SetResetDifficulty(0.2); //Not that retarded as the first one 		
+		
+	
 		
 		//The idle one is already included
 		EnemyCharacterStageTwo.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
@@ -2171,16 +2228,70 @@ function CreateLevel()
 					
 		EnemyCharacterStageTwo.bHasHealthBarsOnHead = true;
 
-	
-		//function spawnActor(name, x,y, team, mainTexture, actorClass, ControlledActor, LifeTimeOfActor, ActorInitialSpeedX, ActorInitialSpeedY, bIsPlayerControlled, pcollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, pDrawSizeX, pDrawSizeY, pClippingImageSizeX, pClippingImageSizeY)
-
-		//spawnActor('Plataforma4Elevated', 400, 450, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -150.0 ,-200.0, 150.0, 200.0, 256.0, 64.0, 885.0, 100.0 );   //Platform 3		
-				
+		//Textures
+		//The idle one is already included
+		EnemyCharacterStageOne.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+		EnemyCharacterStageOne.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+		EnemyCharacterStageOne.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+		EnemyCharacterStageOne.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP			
 		
-		//spawnActor('Plataforma', 75, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
-		//spawnActor('Plataforma', 100, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
+		//Left textrues
+		EnemyCharacterStageOne.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+		EnemyCharacterStageOne.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+		EnemyCharacterStageOne.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+		EnemyCharacterStageOne.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+		EnemyCharacterStageOne.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
+				
+		EnemyCharacterStageOne.bHasHealthBarsOnHead = true;					
+
+			
+		//Add the draw size and such to it
+		
+		EnemyCharacterStageThree.DrawSizeX = 150;
+		EnemyCharacterStageThree.DrawSizeY = 175;			
+		EnemyCharacterStageThree.ClippingImageSizeX = 128.0;
+		EnemyCharacterStageThree.ClippingImageSizeY = 128.0;		
+		EnemyCharacterStageThree.YOffset = +20; //Draw offset		
+		
+		EnemyCharacterStageThree.collisionSizeMinX1 = -50; //blue min
+		EnemyCharacterStageThree.collisionSizeMinY1 = -100;
+		EnemyCharacterStageThree.collisionSizeMaxX1 = 50; //red max
+		EnemyCharacterStageThree.collisionSizeMaxY1 = 30;	
+		EnemyCharacterStageThree.XOriginOffset = 65; //So we set land distance when walking, draws			
+		EnemyCharacterStageThree.YOriginOffset = 100; //So we set land distance when walking, draws		
+			
+	
+	
+		//Textures
+		//The idle one is already included
+		EnemyCharacterStageThree.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+		EnemyCharacterStageThree.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+		EnemyCharacterStageThree.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+		EnemyCharacterStageThree.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP			
+		
+		//Left textrues
+		EnemyCharacterStageThree.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+		EnemyCharacterStageThree.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+		EnemyCharacterStageThree.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+		EnemyCharacterStageThree.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+		EnemyCharacterStageThree.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
+					
+		EnemyCharacterStageThree.bHasHealthBarsOnHead = true;			
+		//When you see last guard he says You will only get freedom if you defeat me NEEDS Stage 4 enemy 
+		//and once he is dead the rudis will spawn when you overlapp it freedom
 	
 }
+	
+//Desc: this spawns an enemy 
+//Param 1 color 
+//Parm 2 Overall size X 
+//Parm 2 Overall size Y ...
+function SpawnEnemy()
+{
+
+}	
+	
+	
 	
 function addLoadEvent(func) 
 {
