@@ -18,30 +18,45 @@
 			<canvas class="canvas"id="canvas" width="1000" height="500">
 			Your web browser does not support canvas.
 			</canvas>
-			<button class='LeftButton'  ontouchstart='ButtonMoveLeftPressed();' ontouchend='ButtonMoveLeftUnPressed();' style='position:fixed; top:100px; left: 20px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
+			
+			<!-- Buttons of controls -->
+			<button class='PlayButtons'  ontouchstart='ButtonMoveLeftPressed();' ontouchend='ButtonMoveLeftUnPressed();' style='position:fixed; visibility: hidden; top:100px; left: 20px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
 				<canvas class="MoveLeftButtonCanvas"id="MoveLeftButtonCanvas" width="50" height="50">
 				</canvas>
 			</button>
-			<button class='RightButton'  ontouchstart='ButtonMoveRightPressed();' ontouchend='ButtonMoveRightUnPressed();' style='position:fixed; top:100px; left: 120px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
+			<button class='PlayButtons'  ontouchstart='ButtonMoveRightPressed();' ontouchend='ButtonMoveRightUnPressed();' style='position:fixed; visibility: hidden; top:100px; left: 120px; width:75px; height: 75px; background-color:rgba(255,255,255,.25); opacity:0.9; '>
 				<canvas class="MoveRightButtonCanvas"id="MoveRightButtonCanvas" width="50" height="50">
 				</canvas>
 			</button>		
-			<button class='JumpButton'  ontouchstart='ButtonJumpButtonPressed();' ontouchend='' style='position:fixed; top:10px; left: 300px; width:75px; height: 75px; background-color:rgba(0,0,255,.25); opacity:0.9; '>
+			<button class='PlayButtons'  ontouchstart='ButtonJumpButtonPressed();' ontouchend='' style='position:fixed; visibility: hidden; top:10px; left: 300px; width:75px; height: 75px; background-color:rgba(0,0,255,.25); opacity:0.9; '>
 				<canvas class="JumpButtonCanvas"id="JumpButtonCanvas" width="50" height="50">
 				</canvas>
 			</button>	
-			<button class='AttackButton'  ontouchstart='AttackButtonPressed();' ontouchend='AttackButtonUnPressed()' style='position:fixed; top:125px; left: 450px; width:75px; height: 75px; background-color:rgba(255,0,0,.5); opacity:0.9; '>
+			<button class='PlayButtons'  ontouchstart='AttackButtonPressed();' ontouchend='AttackButtonUnPressed()' style='position:fixed; visibility: hidden; top:125px; left: 450px; width:75px; height: 75px; background-color:rgba(255,0,0,.5); opacity:0.9; '>
 				<canvas class="AttackButtonCanvas"id="AttackButtonCanvas" width="50" height="50">
 				</canvas>
 			</button>				
-			<button class='DefendButton'  ontouchstart='DefendButtonPressed();' ontouchend='DefendButtonUnPressed()' style='position:fixed; top:125px; left: 350px; width:75px; height: 75px; background-color:rgba(255,0,0,.25); opacity:0.9; '>
+			<button class='PlayButtons'  ontouchstart='DefendButtonPressed();' ontouchend='DefendButtonUnPressed()' style='position:fixed; visibility: hidden; top:125px; left: 350px; width:75px; height: 75px; background-color:rgba(255,0,0,.25); opacity:0.9; '>
 				<canvas class="DefendButtonCanvas"id="DefendButtonCanvas" width="50" height="50">
 				</canvas>
+			</button>	
+			
+			<!-- Buttons of menu 			
+			<button class='TestButtonMenu1'  ontouchstart='DefendButtonPressed();' ontouchend='DefendButtonUnPressed()' style='position:fixed; top:100px; left: 200px; width:100px; height: 50px; background-color:rgba(255,0,0,.25); opacity:0.9; '>
+				<canvas class="DefendButtonCanvas"id="DefendButtonCanvas" width="100" height="50">
+				</canvas>
 			</button>				
-			
-			
-			<!-- <button onclick="ButtonMoveRightPressed()"> This is a button for advance right</button> -->
-			<!-- <button> This is a button for advance left</button> -->
+			<button class='TestButtonMenu2'  ontouchstart='DefendButtonPressed();' ontouchend='DefendButtonUnPressed()' style='position:fixed; top:150px; left: 200px; width:100px; height: 50px; background-color:rgba(255,0,0,.25); opacity:0.9; '>
+				<canvas class="DefendButtonCanvas"id="DefendButtonCanvas" width="100" height="50">
+				</canvas>
+			</button>				
+			-->						
+
+			<button class='MenuButtons' id='PlayButton' onclick="StartGameButtonPress()" style='position:fixed; top:0px; height: 0px; height: 50px; width: 150px; left: 250px; color:rgba(255,255,255,0.75); background-color:rgba(0,0,255,0.75); '> PLAY! </button> 
+			<button class='MenuButtons' onclick="ChangeLanguageChangeButtonPress()" style='position:fixed; top:75px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(255,255,0,0.75); '> Language:English! </button> 
+			<button class='MenuButtons' onclick="ChangeDifChangeButtonPress()" style='position:fixed; top:150px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(0,255,0,0.75); '> Difficulty:Easy! </button> 
+
+			<!-- <button> This is a button for advance left</button> -->			
 		</div>
 	</div><!-- maindiv -->
 </body>
@@ -64,7 +79,7 @@
         section 4, provided you include this license notice and a URL
         through which recipients can access the Corresponding Source.   
         @licend  The above is the entire license notice
-        for the JavaScript code in this page.
+        for the JavaScript code in this page
         */
 		
 // IMAGES
@@ -72,7 +87,7 @@
 //Possible names
 //Marius Et Gladius, Mario i la gladius ? 
 //Davidus Versus Hoplomachus ? 
-
+//Make the menu already
 
 
 //LIST
@@ -80,21 +95,10 @@
 //Lifespan LifeTime and Draw the otherd enemies
 //Make sure that the bug of the die resurrection does not occur
 //There is bGoingRight and bMovingLeft use em in a way you used DESIREDLOCATION good for pathfinding
-//Debug flying textes should go to same level as in level
-//Make sure platform up from you collides investigate why 
-//On enemy dead do lower the collision or others or make him not collide
-//bPreparign attack bug sometime looks left and attacks right
-//RandRange to on difficulty and all
-//Avoid from going to the max level
-//The messages should be from only a level 
-//Use the G for block F for attack
-//While stunned dont change direction
-//FG and f attack g protect
 //Bug sometimes the persecution mode does not work 
 //Make jumping AI on you trying to damage you
 //Cooldown for the jump
-//Make health bar
-
+//for jumping to 
 
 //Essential
 //Make sure that the size of canvas is right adjust a bit but might be good 
@@ -118,7 +122,6 @@ var MainSoundtrack = new Audio('MainMusic.ogg'); //WIP
 //MainSoundtrack.loop = true; 
 
 
-var EnemyCharacterStageOne;
 var SpeedOfMainCharacter = 5;
 
 
@@ -131,7 +134,7 @@ class Universe
 		
 		this.name = name;		
 		this.UnvierseState = UnvierseState;	
-		this.level = level;	
+		this.level = -3;	
 		this.actorsIngame = [];
 		this.MainCharacter = undefined;
 		this.MainBiController = undefined;		
@@ -165,6 +168,43 @@ class Universe
 		
 		this.floatingtexts.push(LocalSpawnedText);
 	}
+	
+	BeginPlayGame()
+	{
+		this.level = 0;	
+		
+		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 450, 2, "MulliusShieldAndSwordIdle.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 0
+		);   //Mullius main character, player controlled
+		
+		
+		GetUniverse().MainCharacter.collisionSizeMinX1 = -50;
+		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
+		GetUniverse().MainCharacter.collisionSizeMaxX1 = 60;
+		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
+		GetUniverse().MainCharacter.XOriginOffset = 50; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
+		
+		GetUniverse().MainCharacter.bHasHealthBarsOnHead = true;	
+
+		//Controllers AI and player controller
+		
+			//PlayerController
+			
+		GetUniverse().MainBiController = spawnActor('PlayerBiController', 25, 0, 2, "Mullius.png", "BiController",
+		GetUniverse().MainCharacter,100000,0,0,true );   //Controller bi so both for player and others
+
+		GetUniverse().MainBiController.posses(GetUniverse().MainCharacter); //Posses by player controller					//Collisions -X -Y X Y 
+	
+		//GetUniverse().MainBiController	
+
+
+		
+	}
+	
+	
+	
 
 }
 
@@ -205,8 +245,6 @@ class FloatingText
 		
 			function( item ) 
 			{
-				
-
 				if( item == textself )
 				{
 					GetUniverse().floatingtexts.splice(i, 1);
@@ -1900,20 +1938,7 @@ function CreateLevel()
 		);   //Platform 5 on the left to test collision				
 		
 		
-		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 450, 2, "MulliusShieldAndSwordIdle.png", "Pawn", 
-		0 ,10000, 1, 1, false
-		,"normal", 0
-		);   //Mullius main character, player controlled
-		
-		
-		GetUniverse().MainCharacter.collisionSizeMinX1 = -50;
-		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
-		GetUniverse().MainCharacter.collisionSizeMaxX1 = 60;
-		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
-		GetUniverse().MainCharacter.XOriginOffset = 50; //So we set land distance when walking, draws			
-		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
-		
-		GetUniverse().MainCharacter.bHasHealthBarsOnHead = true;
+
 		
 		
 
@@ -1935,24 +1960,11 @@ function CreateLevel()
 		this.ClippingImageSizeY = 100.0;
 		*/
 		
-		//Controllers AI and player controller
-		
-			//PlayerController
-			
-		GetUniverse().MainBiController = spawnActor('PlayerBiController', 25, 0, 2, "Mullius.png", "BiController",
-		GetUniverse().MainCharacter,100000,0,0,true );   //Controller bi so both for player and others
 
-		GetUniverse().MainBiController.posses(GetUniverse().MainCharacter); //Posses by player controller					//Collisions -X -Y X Y 
-	
-		//GetUniverse().MainBiController
 		
 
 
 
-		
-
-		
-		
 		
 		//Level 0
 		spawnActor('Plataforma1Level-1', 0, 600, 2, "Platform.png", "Actor"
@@ -2857,8 +2869,35 @@ function clamp(number, min, max)
 	return Math.max(min, Math.min(number, max));
 }
 
+function StartGameButtonPress()
+{
+	MainSoundtrack.play(); //It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
+	MainSoundtrack.loop = true; 	
+	GetUniverse().BeginPlayGame();
+	//document.getElementsByClassName('MenuButtons').style.visibility = 'hidden';
+	
+	document.getElementsByClassName('MenuButtons')[0].style.display = "none";	
+	document.getElementsByClassName('MenuButtons')[1].style.display = "none";		
+	document.getElementsByClassName('MenuButtons')[2].style.display = "none";
 
+	document.getElementsByClassName('PlayButtons')[0].style.visibility = 'visible';
+	document.getElementsByClassName('PlayButtons')[1].style.visibility = 'visible';	
+	document.getElementsByClassName('PlayButtons')[2].style.visibility = 'visible';	
+	document.getElementsByClassName('PlayButtons')[3].style.visibility = 'visible';	
+	document.getElementsByClassName('PlayButtons')[4].style.visibility = 'visible';	
+	//document.getElementById('PlayButton').style.display = "none";;	
+	
+}
 
+function ChangeLanguageChangeButtonPress()
+{
+	//GetUniverse().BeginPlayGame();		
+}
+
+function ChangeDifChangeButtonPress()
+{
+	//GetUniverse().BeginPlayGame();		
+}
 
 </script>
 
