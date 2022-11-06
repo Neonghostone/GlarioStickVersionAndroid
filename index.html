@@ -870,7 +870,7 @@ class Actor
 			
         }	
 	
-		if( this.constructor.name == "Pawn"   )
+		if( this.constructor.name == "Pawn" || this.name == "Rudis"    )
 		{
 			//if(this.bCanStopJumpNow == false ) 
 			//{
@@ -2292,18 +2292,93 @@ function CreateLevel()
 		//When you see last guard he says You will only get freedom if you defeat me NEEDS Stage 4 enemy 
 		//and once he is dead the rudis will spawn when you overlapp it freedom
 	
+	
+	/*Here with function WIP Still it needs color maybe and health and other complementary like showHelp*/
+	
+	SpawnEnemy(200, 0, 
+	150, 175, 20,
+	true,
+	-50, -100, 50, 30,
+	200, 2, 0
+	);	
+
+	SpawnRudis(500, 200, 0);
+
+	
 }
 	
 //Desc: this spawns an enemy 
 //Param 1 color 
 //Parm 2 Overall size X 
 //Parm 2 Overall size Y ...
-function SpawnEnemy()
+function SpawnEnemy(px, py, 
+pDrawSizeX, pDrawSizeY, pYOffset, 
+pbAIControlled, 
+pCollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, 
+phealth, pTeam, pLevel)
 {
+	let SpawnedEnemyChar;
+	let AIControllerSpawnedIfAny;
 
+	SpawnedEnemyChar = spawnActor('MeowEnemy', px, py, 2,
+	"GladiatorLenemieRed.png", "Pawn",
+	0, 10000, 0, 0, false, 
+	'Idle', pLevel);
+	
+		//AIController
+	AIControllerSpawnedIfAny = spawnActor('AIBiController1', 25, 0, 2, "GladiatorLenemieRed.png", "BiController",
+	SpawnedEnemyChar,100000,0,0,false );   //Controller bi so both for player and others
+	AIControllerSpawnedIfAny.SetState("AIGladiatorRoamLookFor");
+	AIControllerSpawnedIfAny.posses(SpawnedEnemyChar) //Posses by player controller					//Collisions -X -Y X Y 
+	AIControllerSpawnedIfAny.SetResetDifficulty( GetRandomFloat(-2, -2.5, 0 ) ); //Enemy 1 should be easy	
+	SpawnedEnemyChar.collisionSizeMinX1 = pCollisionSizeMinX1; //blue min
+	SpawnedEnemyChar.collisionSizeMinY1 = pcollisionSizeMinY1;
+	SpawnedEnemyChar.collisionSizeMaxX1 = pcollisionSizeMaxX1; //red max
+	SpawnedEnemyChar.collisionSizeMaxY1 = pcollisionSizeMaxY1;
+	SpawnedEnemyChar.YOffset = +pYOffset; //Draw offset		
+	SpawnedEnemyChar.XOriginOffset = 65; //So we set land distance when walking, draws			
+	SpawnedEnemyChar.YOriginOffset = 100; //So we set land distance when walking, draws
+	SpawnedEnemyChar.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+	SpawnedEnemyChar.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+	SpawnedEnemyChar.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+	SpawnedEnemyChar.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP			
+	SpawnedEnemyChar.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+	SpawnedEnemyChar.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+	SpawnedEnemyChar.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+	SpawnedEnemyChar.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+	SpawnedEnemyChar.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP									
+	SpawnedEnemyChar.bHasHealthBarsOnHead = true;						
+	SpawnedEnemyChar.DrawSizeX = pDrawSizeX;
+	SpawnedEnemyChar.DrawSizeY = pDrawSizeY;		
+	
 }	
 	
+//Desc: For game victory
+function SpawnRudis(px, py, pLevel)
+{
+	let SpawnedRudis;
+
+	SpawnedRudis = spawnActor('Rudis', px, py, 2,
+	"rudis40.png", "Actor",
+	0, 10000, 0, 0, false, 
+	'RUDISFUCK', 0);
 	
+	SpawnedRudis.collisionSizeMinX1 = -10; //blue min
+	SpawnedRudis.collisionSizeMinY1 = -10;
+	SpawnedRudis.collisionSizeMaxX1 = 10; //red max
+	SpawnedRudis.collisionSizeMaxY1 = 10;
+	SpawnedRudis.YOffset = +0; //Draw offset		
+	SpawnedRudis.XOriginOffset = 65; //So we set land distance when walking, draws			
+	SpawnedRudis.YOriginOffset = 100; //So we set land distance when walking, draws								
+	SpawnedRudis.bHasHealthBarsOnHead = true;		
+	SpawnedRudis.DrawSizeX = 250;
+	SpawnedRudis.DrawSizeY = 250;		
+	SpawnedRudis.ClippingImageSizeX = 128.0;
+	SpawnedRudis.ClippingImageSizeY = 128.0;	
+	
+	console.log("SpawningRudis "+SpawnedRudis.x);
+	
+}	
 	
 function addLoadEvent(func) 
 {
