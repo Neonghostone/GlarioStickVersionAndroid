@@ -138,7 +138,7 @@ class Universe
 		this.actorsIngame = [];
 		this.MainCharacter = undefined;
 		this.MainBiController = undefined;		
-		this.bDrawDebug = false;
+		this.bDrawDebug = true;
 		this.floatingtexts = [];
 		this.MinLevel = -1;
 		this.MaxLevel = 3;		
@@ -362,14 +362,35 @@ class Actor
 		
 	}
 	
+	HandleTouch()
+	{
+		
+	}
+	
+	
 	//Desc: to perform spacing and such
 	OverlapingWithSomeOtherActor( ActorOverlappingWith ) 
 	{ 
-		
+
+	
+	
+		//UnTouch event here 
+		for(let I = 0; I < this.TouchingMemoryActors.length; I++) 
+		{
+			if( !ActorOverlappingWith.includes(this.TouchingMemoryActors[I]) ) 
+			{
+				this.UnTouch( this.TouchingMemoryActors[I] );
+			} 		
+		}			
+				
+	
 		//Touch event here 
 		for(let I = 0; I < ActorOverlappingWith.length; I++) 
 		{
-			this.Touch( ActorOverlappingWith[I] );
+			if( !this.TouchingMemoryActors.includes(ActorOverlappingWith[I]) ) 
+			{
+				this.Touch( ActorOverlappingWith[I] );
+			} 	
 		}			
 		
 		
@@ -383,18 +404,59 @@ class Actor
 					this.x -= 0.75;
 			}
 		} 
-	
+		
 	}
 	
 	//WIP Call it once using array untocuh removes it, sword here rudis
 	Touch(ActorTouching) 
-	{ 
-		//ActorTouching.Destroy();
+	{ 	
+		if(  ( this.name == "Rudis" && ActorTouching.name == "MulliusMainChar" ) || ( this.name == "MulliusMainChar" && ActorTouching.name == "Rudis" )   ) 
+		{
+			this.TouchingMemoryActors.push(ActorTouching); 
+			
+			if( ActorTouching.name == "Rudis" )
+			{
+				ActorTouching.Destroy();				
+			}
+			if( this.name == "Rudis" )
+			{
+				this.Destroy();		
+			}
+			  
+			
+		}
+
 	} 
 	
 	//WIP remove from array here
 	UnTouch(ActorUnTouching)
 	{
+		let i = 0;
+		let selfActor = this;
+	
+	
+		if(  ( this.name == "Rudis" && ActorUnTouching.name == "MulliusMainChar" ) || ( this.name == "MulliusMainChar" && ActorUnTouching.name == "Rudis" )   ) 
+		{	
+	
+			//GetUniverse().floatingtexts.splice(GetUniverse().floatingtexts.findIndex(textself),1);
+			this.TouchingMemoryActors.filter
+			(
+			
+				function( item ) 
+				{
+					if( item == ActorUnTouching )
+					{
+						selfActor.TouchingMemoryActors.splice(i, 1);
+					}	
+					
+					i++;
+					//return( item == textself );	
+				}
+			
+			); 
+		
+		}
+
 		
 	}
 	
@@ -682,6 +744,8 @@ class Actor
 		let ArrayOfActorsColliding = [];
 		let ArrayOfActorsCollidingRight = [];
 		let ArrayOfActorsCollidingLeft = [];
+		let ArrayOfActorsCollidingToTouch = [];		
+		
 		
 		self = this;
 		//super.ActorTick(DeltaTime); 
@@ -703,17 +767,21 @@ class Actor
 		{	
 			ArrayOfActorsColliding = this.isActorCollidingWithSomething();
 			
-			if( ArrayOfActorsColliding.length > 0) 
-			{ 
-				this.OverlapingWithSomeOtherActor( ArrayOfActorsColliding );
-			} 
-			
-			
 			ArrayOfActorsCollidingRight = this.isActorCollidingWithSomethingRightSide();	
-			
 			
 		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide();
 			
+			
+			ArrayOfActorsCollidingToTouch = ArrayOfActorsCollidingToTouch.concat(this.isActorCollidingWithSomething(), this.isActorCollidingWithSomethingRightSide(), this.isActorCollidingWithSomethingLeftSide() );
+
+			if( ArrayOfActorsCollidingToTouch.length > 0 ) 
+			{
+				this.OverlapingWithSomeOtherActor( ArrayOfActorsCollidingToTouch );				
+			}
+
+
+
+
 			
 		}
 
@@ -1254,7 +1322,8 @@ class Actor
 		//GetUniverse().floatingtexts.splice(GetUniverse().floatingtexts.findIndex(textself),1);
 
 		
-		GetUniverse().actorsIngame.filter(
+		GetUniverse().actorsIngame.filter
+		(
 		
 			function( item ) 
 			{
