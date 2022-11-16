@@ -138,7 +138,7 @@ class Universe
 		this.actorsIngame = [];
 		this.MainCharacter = undefined;
 		this.MainBiController = undefined;		
-		this.bDrawDebug = true;
+		this.bDrawDebug = false;
 		this.floatingtexts = [];
 		this.MinLevel = -1;
 		this.MaxLevel = 3;		
@@ -166,6 +166,12 @@ class Universe
 		
 	}
 	
+	HandleVictory()
+	{
+		this.InstanceGameplayFloatingText( 500, 400, "Victory: You are free! ", 5000.0, 'green', 0.001 , 0, 25.0 );
+	}
+	
+	
 	InstanceGameplayFloatingText(x, y, floatingtext, textduration, textcolor, textspeed, textlevel, textsize)
 	{	
 		let LocalSpawnedText;
@@ -179,7 +185,7 @@ class Universe
 	{
 		this.level = 0;	
 		
-		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 450, 2, "MulliusShieldAndSwordIdle.png", "Pawn", 
+		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 250, 2, "CharacterGladiatorHeraclit.png", "Pawn", 
 		0 ,10000, 1, 1, false
 		,"normal", 0
 		);   //Mullius main character, player controlled
@@ -189,8 +195,26 @@ class Universe
 		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
 		GetUniverse().MainCharacter.collisionSizeMaxX1 = 60;
 		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
-		GetUniverse().MainCharacter.XOriginOffset = 50; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.XOriginOffset = 100; //So we set land distance when walking, draws			
 		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
+		GetUniverse().MainCharacter.DrawSizeX = 256; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.DrawSizeY = 256; //So we set land distance when walking, draws		
+		GetUniverse().MainCharacter.XOffset = 0; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.YOffset = 125; //So we set land distance when walking, draws		
+		
+		
+		/*
+		this.collisionSizeMinX1 = -10; //the collision size box FOR PLATFORM AS DEF
+		this.collisionSizeMinY1 = -15; //the collision size box FOR PLATFORM AS DEF
+		this.collisionSizeMaxX1 = 250; //the collision size box FOR PLATFORM AS DEF
+		this.collisionSizeMaxY1 = 80; //the collision size box	FOR PLATFORM AS DEF
+		this.DrawSizeX = 256; //the draw size
+		this.DrawSizeY = 64; //the draw size	
+		this.ClippingImageSizeX = 885.0;
+		this.ClippingImageSizeY = 100.0;
+		this.bHasCollision = true;
+		this.XOffset = 0.0; //So we set land 
+		*/
 		
 		GetUniverse().MainCharacter.bHasHealthBarsOnHead = true;	
 
@@ -415,11 +439,13 @@ class Actor
 			this.TouchingMemoryActors.push(ActorTouching); 
 			
 			if( ActorTouching.name == "Rudis" )
-			{
+			{	
+				GetUniverse().HandleVictory();
 				ActorTouching.Destroy();				
 			}
 			if( this.name == "Rudis" )
 			{
+				GetUniverse().HandleVictory();				
 				this.Destroy();		
 			}
 			  
@@ -771,18 +797,15 @@ class Actor
 			
 		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide();
 			
-			
+			//Conjunction of all colliding actors
 			ArrayOfActorsCollidingToTouch = ArrayOfActorsCollidingToTouch.concat(this.isActorCollidingWithSomething(), this.isActorCollidingWithSomethingRightSide(), this.isActorCollidingWithSomethingLeftSide() );
 
 			if( ArrayOfActorsCollidingToTouch.length > 0 ) 
-			{
-				this.OverlapingWithSomeOtherActor( ArrayOfActorsCollidingToTouch );				
+			{	
+				//this.OverlapingWithSomeOtherActor( ArrayOfActorsColliding ); //this will cause unstuck but no pushing			
+				this.OverlapingWithSomeOtherActor( ArrayOfActorsCollidingToTouch );	//this will cause some pushing			
 			}
-
-
-
-
-			
+		
 		}
 
 
@@ -2405,10 +2428,10 @@ function CreateLevel()
 	/*Here with function WIP Still it needs color maybe and health and other complementary like showHelp*/
 	
 	SpawnEnemy(200, 0, 
-	150, 175, 20,
+	285, 285, 175,
 	true,
 	-50, -100, 50, 30,
-	200, 2, 3, 
+	200, 2, 0, 
 	'PawnEnemyGuardianOfRudisFirstArena'
 	);	
 
@@ -2432,7 +2455,7 @@ pname)
 	let AIControllerSpawnedIfAny;
 
 	SpawnedEnemyChar = spawnActor(pname, px, py, 2,
-	"GladiatorLenemieRed.png", "Pawn",
+	"CharacterMinotaur128color.png", "Pawn",
 	0, 10000, 0, 0, false, 
 	'Idle', pLevel);
 	
@@ -2774,7 +2797,7 @@ function draw(timestamp)
 				if( value.level == ActualUniverse.level ) //value.level == ActualUniverse.level
 				{
 					//ctx.fillStyle = 'blue'; //It does not give color to a image
-					ctx.drawImage(value.InternalTexture,0,0,value.ClippingImageSizeX,value.ClippingImageSizeY,value.x - value.XOffset, value.y - value.YOffset, value.DrawSizeX,value.DrawSizeY);
+					ctx.drawImage(value.InternalTexture,0,0,value.ClippingImageSizeX, value.ClippingImageSizeY,value.x - value.XOffset, value.y - value.YOffset, value.DrawSizeX, value.DrawSizeY);
 					value.ActorTick(timestamp);
 				}
 				else
