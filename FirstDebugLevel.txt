@@ -1,0 +1,296 @@
+
+	
+		//Examples of assigning images to stuff SOme references delete this*
+		gladiatorTest.setAttribute("src", "Mullius.png");
+		BGImage.setAttribute("src", "Bacrkound.png");
+		TestPlatform.setAttribute("src", "Platform.png");
+		COSImage.setAttribute("src", "COSLogo.png");
+		
+		
+		//Spawn the GameInfo the universe and such 
+		ActualUniverse = spawnActor('UniverseInfo', 50, 50, 2, 
+		"Platform.png", "Universe",0 ,10000, 1, 1, 
+		false
+		,"normal", 0 
+		);   //Platform 5 on the left to test collision				
+		
+		
+		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 450, 2, "MulliusShieldAndSwordIdle.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 0
+		);   //Mullius main character, player controlled
+		
+		
+		GetUniverse().MainCharacter.collisionSizeMinX1 = -50;
+		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
+		GetUniverse().MainCharacter.collisionSizeMaxX1 = 60;
+		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
+		GetUniverse().MainCharacter.XOriginOffset = 50; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
+		
+		GetUniverse().MainCharacter.bHasHealthBarsOnHead = true;
+		
+		
+		EnemyCharacterStageOne = spawnActor('EnemeyStageOneNumberOne', 300, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
+		0 ,10000, 1, 1, false
+		,"normal", 0
+		);   //Enemy to kill 1
+		
+		//Add the draw size and such to it
+		
+		EnemyCharacterStageOne.DrawSizeX = 150;
+		EnemyCharacterStageOne.DrawSizeY = 150;			
+		EnemyCharacterStageOne.ClippingImageSizeX = 128.0;
+		EnemyCharacterStageOne.ClippingImageSizeY = 128.0;		
+		EnemyCharacterStageOne.YOffset = +20; //Draw offset		
+		
+		EnemyCharacterStageOne.collisionSizeMinX1 = -50;
+		EnemyCharacterStageOne.collisionSizeMinY1 = -100;
+		EnemyCharacterStageOne.collisionSizeMaxX1 = 90;
+		EnemyCharacterStageOne.collisionSizeMaxY1 = 30;	
+		EnemyCharacterStageOne.XOriginOffset = 50; //So we set land distance when walking, draws			
+		EnemyCharacterStageOne.YOriginOffset = 100; //So we set land distance when walking, draws		
+			
+		EnemyCharacterStageOne.bHasHealthBarsOnHead = true;		
+				
+			
+		
+		/*
+		this.collisionSizeMinX1 = -125; //the collision size box
+		this.collisionSizeMinY1 = -200; //the collision size box
+		this.collisionSizeMaxX1 = 125; //the collision size box
+		this.collisionSizeMaxY1 = 125; //the collision size box	
+		this.DrawSizeX = 256; //the draw size
+		this.DrawSizeY = 64; //the draw size	
+		this.ClippingImageSizeX = 885.0;
+		this.ClippingImageSizeY = 100.0;
+		*/
+		
+		//Controllers AI and player controller
+		
+			//PlayerController
+			
+		GetUniverse().MainBiController = spawnActor('PlayerBiController', 25, 0, 2, "Mullius.png", "BiController",
+		GetUniverse().MainCharacter,100000,0,0,true );   //Controller bi so both for player and others
+
+		GetUniverse().MainBiController.posses(GetUniverse().MainCharacter); //Posses by player controller					//Collisions -X -Y X Y 
+	
+		//GetUniverse().MainBiController
+		
+
+
+
+		
+
+		
+		
+		
+		//Level 0
+		spawnActor('Plataforma1Level-1', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1	
+	
+		spawnActor('Plataforma2Level-1', 200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+		
+		spawnActor('Plataforma3Level-1', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+				
+		spawnActor('Plataforma4Level-1', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+						
+		spawnActor('Plataforma5Level-1', 800, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+
+		spawnActor('Plataforma6Level-1', 1000, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+										
+		spawnActor('Plataforma7Level-1', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1 level -1			
+			
+		spawnActor('Plataforma8Level-1', 50, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", -1 );   //Platform 1	level -1
+				
+		
+		//Next level 1
+		spawnActor('Plataforma1Level0', 50, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 1 level 0	
+		
+		spawnActor('Plataforma2Level0', 300, 600, 2, "Platform.png", "Actor",
+		0 ,10000, 1, 1, false,
+		 "normal", 0 );   //Platform 2 level 0		
+		
+		spawnActor('Plataforma3Level0', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 3 level 0	
+		
+		spawnActor('Plataforma4Level0', 700, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+		
+		spawnActor('Plataforma5Level0', -175, 600, 2, "Platform.png", "Actor",
+		0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 5 on the left to test collision		
+		
+		//spawnActor('Plataforma6', 900, 600, 2, "Platform.png", "Actor"
+		//,0 ,10000, 1, 1, false, 
+		// "normal", 0 );   //Platform 4		
+				
+		spawnActor('Plataforma7Level0', 1100, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+				
+		spawnActor('Plataforma8ElevatedLevel0', 900, 525, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+						
+		
+		spawnActor('Plataforma9ElevatedLevel0', 700, 350, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4 level 0			
+						
+				
+	
+		//Next level 2
+		spawnActor('Plataforma1Level2', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1	
+	
+		spawnActor('Plataforma2Level2', 200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+		
+		spawnActor('Plataforma3Level2', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+				
+		spawnActor('Plataforma4Level3', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+						
+		spawnActor('Plataforma5Level4', 800, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+
+		spawnActor('Plataforma6Level5', 1000, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+										
+		spawnActor('Plataforma7Level6', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 1 );   //Platform 1 level 1			
+			
+			
+		spawnActor('Plataforma7', 1100, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4		
+				
+		spawnActor('Plataforma8Elevated', 900, 525, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 0 );   //Platform 4		
+						
+		
+		
+		//Next level 3
+		spawnActor('Plataforma1Level3', 0, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2	
+	
+		spawnActor('Plataforma2Level3', 200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+		
+		spawnActor('Plataforma3Level3', 400, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+				
+		spawnActor('Plataforma4Level3', 600, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+						
+		spawnActor('Plataforma5Level3', 800, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+
+		spawnActor('Plataforma6Level3', 1000, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+										
+		spawnActor('Plataforma7Level3', 1200, 600, 2, "Platform.png", "Actor"
+		,0 ,10000, 1, 1, false, 
+		 "normal", 2 );   //Platform 1 level 2			
+								
+	
+		EnemyCharacterStageTwo = spawnActor('EnemeyStage2', 1000, 450, 2, "GladiatorLenemieRed.png", "Pawn", 
+		0 ,10000, 1, 1, false,
+		"normal", 1
+		);   //Enemy to kill 1		
+		
+		//Textures
+		//The idle one is already included
+		EnemyCharacterStageOne.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+		EnemyCharacterStageOne.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+		EnemyCharacterStageOne.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+		EnemyCharacterStageOne.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP			
+		
+		//Left textrues
+		EnemyCharacterStageOne.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+		EnemyCharacterStageOne.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+		EnemyCharacterStageOne.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+		EnemyCharacterStageOne.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+		EnemyCharacterStageOne.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
+				
+			//AIController
+		AIBiController1 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageOne,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController1.SetState("AIGladiatorRoamLookFor");
+		AIBiController1.posses(EnemyCharacterStageOne) //Posses by player controller					//Collisions -X -Y X Y 
+		AIBiController1.SetResetDifficulty(-1.5); //Enemy 1 should be easy
+		
+		
+		//AIController
+		AIBiController2 = spawnActor('AIBiController1', 25, 0, 2, "Mullius.png", "BiController",
+		EnemyCharacterStageTwo,100000,0,0,false );   //Controller bi so both for player and others
+		AIBiController2.posses(EnemyCharacterStageTwo) //Posses by player controller					//Collisions -X -Y X Y 	
+		AIBiController2.SetState("AIGladiatorRoamLookFor");		
+		AIBiController2.SetResetDifficulty(-1.25); //Not that retarded as the first one 	
+		
+		//The idle one is already included
+		EnemyCharacterStageTwo.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+		EnemyCharacterStageTwo.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
+		EnemyCharacterStageTwo.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
+		EnemyCharacterStageTwo.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP	
+		
+		//Left textrues
+		EnemyCharacterStageTwo.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+		EnemyCharacterStageTwo.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+		EnemyCharacterStageTwo.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
+		EnemyCharacterStageTwo.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
+		EnemyCharacterStageTwo.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP				
+		
+		EnemyCharacterStageTwo.collisionSizeMinX1 = -50;
+		EnemyCharacterStageTwo.collisionSizeMinY1 = -100;
+		EnemyCharacterStageTwo.collisionSizeMaxX1 = 90;
+		EnemyCharacterStageTwo.collisionSizeMaxY1 = 30;	
+		EnemyCharacterStageTwo.XOriginOffset = 50; //So we set land distance when walking, draws			
+		EnemyCharacterStageTwo.YOriginOffset = 100; //So we set land distance when walking, draws		
+						
+		EnemyCharacterStageTwo.bHasHealthBarsOnHead = true;
+
+	
+		//function spawnActor(name, x,y, team, mainTexture, actorClass, ControlledActor, LifeTimeOfActor, ActorInitialSpeedX, ActorInitialSpeedY, bIsPlayerControlled, pcollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, pDrawSizeX, pDrawSizeY, pClippingImageSizeX, pClippingImageSizeY)
+
+		//spawnActor('Plataforma4Elevated', 400, 450, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -150.0 ,-200.0, 150.0, 200.0, 256.0, 64.0, 885.0, 100.0 );   //Platform 3		
+				
+		
+		//spawnActor('Plataforma', 75, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
+		//spawnActor('Plataforma', 100, 200, 2, "Platform.png", "Actor",0 ,10000, 1, 1, false, -100.0 ,-100.0, 100.0, 100.0, 256.0, 128.0, 885.0, 100.0 );   //Platform 1	
+	
