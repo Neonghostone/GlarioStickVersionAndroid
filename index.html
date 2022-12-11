@@ -138,7 +138,7 @@ class Universe
 		this.actorsIngame = [];
 		this.MainCharacter = undefined;
 		this.MainBiController = undefined;		
-		this.bDrawDebug = false;
+		this.bDrawDebug = true;
 		this.floatingtexts = [];
 		this.MinLevel = -1;
 		this.MaxLevel = 3;		
@@ -191,16 +191,16 @@ class Universe
 		);   //Mullius main character, player controlled
 		
 		
-		GetUniverse().MainCharacter.collisionSizeMinX1 = -50;
-		GetUniverse().MainCharacter.collisionSizeMinY1 = -100;
-		GetUniverse().MainCharacter.collisionSizeMaxX1 = 60;
+		GetUniverse().MainCharacter.collisionSizeMinX1 = -100;
+		GetUniverse().MainCharacter.collisionSizeMinY1 = -190;
+		GetUniverse().MainCharacter.collisionSizeMaxX1 = 75;
 		GetUniverse().MainCharacter.collisionSizeMaxY1 = 20;
 		GetUniverse().MainCharacter.XOriginOffset = 100; //So we set land distance when walking, draws			
 		GetUniverse().MainCharacter.YOriginOffset = 100; //So we set land distance when walking, draws		
-		GetUniverse().MainCharacter.DrawSizeX = 256; //So we set land distance when walking, draws			
-		GetUniverse().MainCharacter.DrawSizeY = 256; //So we set land distance when walking, draws		
+		GetUniverse().MainCharacter.DrawSizeX = 200; //So we set land distance when walking, draws			
+		GetUniverse().MainCharacter.DrawSizeY = 200; //So we set land distance when walking, draws		
 		GetUniverse().MainCharacter.XOffset = 0; //So we set land distance when walking, draws			
-		GetUniverse().MainCharacter.YOffset = 125; //So we set land distance when walking, draws		
+		GetUniverse().MainCharacter.YOffset = 80; //So we set land distance when walking, draws		
 		
 		
 		/*
@@ -228,7 +228,7 @@ class Universe
 		GetUniverse().MainBiController.posses(GetUniverse().MainCharacter); //Posses by player controller					//Collisions -X -Y X Y 
 	
 		//GetUniverse().MainBiController	
-
+		
 
 		
 	}
@@ -372,6 +372,7 @@ class Actor
 		
 		this.RandomFloatBounceSpeed = 10; //Automatically generated on the run
 		this.TouchingMemoryActors = [];
+		this.AttackDistanceReach = 150;
 	} 
 	
 	//List of states 
@@ -423,13 +424,30 @@ class Actor
 			if(ActorOverlappingWith[I].constructor.name == "Pawn" && this.constructor.name != "Actor")  
 			{
 				if( ReturnDirectionActorsDegrees(this, ActorOverlappingWith[I] ) > 0 )
-					this.x += 0.75;
+					this.x += 0.0;
 				else
-					this.x -= 0.75;
+					this.x -= 0.0; //0.75
 			}
 		} 
 		
 	}
+	
+	OverlapingWithSomeOtherActorAddSpread ( ActorOverlappingWith ) 
+	{
+		
+		for(let I = 0; I < ActorOverlappingWith.length; I++) 
+		{
+			if(ActorOverlappingWith[I].constructor.name == "Pawn" && this.constructor.name != "Actor")  
+			{
+				if( ReturnDirectionActorsDegrees(this, ActorOverlappingWith[I] ) > 0 )
+					this.x += 0.75;
+				else
+					this.x -= 0.75; //0.75
+			}
+		} 
+        
+	}		
+	
 	
 	//WIP Call it once using array untocuh removes it, sword here rudis
 	Touch(ActorTouching) 
@@ -803,9 +821,10 @@ class Actor
 			if( ArrayOfActorsCollidingToTouch.length > 0 ) 
 			{	
 				//this.OverlapingWithSomeOtherActor( ArrayOfActorsColliding ); //this will cause unstuck but no pushing			
-				this.OverlapingWithSomeOtherActor( ArrayOfActorsCollidingToTouch );	//this will cause some pushing			
+				this.OverlapingWithSomeOtherActor( ArrayOfActorsCollidingToTouch );	//this will cause some pushing		
+				this.OverlapingWithSomeOtherActorAddSpread(  this.isActorCollidingWithSomething() );	//this will cause some pushing						
 			}
-		
+			
 		}
 
 
@@ -1131,7 +1150,7 @@ class Actor
 					this.InternalTexture.setAttribute("src", this.UnleashAttackTexture);	
 				}
 				
-				DoBladeCollisionCheck(this, 100);
+				DoBladeCollisionCheck(this, this.AttackDistanceReach);
 				
 				this.HandleOfAttackDuration = setInterval( this.FinishAttack.bind(this), this.AttackDuration);
 			}
@@ -2243,19 +2262,19 @@ function CreateLevel()
 	
 		
 	FirstEnemyMinotaur = SpawnEnemy(200, 0, 
-	285, 285, 175,
+	225, 225, 130,
 	true,
-	-50, -100, 50, 30,
+	-60, -200, 120, 30,
 	200, 2, 0, 
 	'FirstEnemyMinotaur'
 	);			
 			
 		
 
-	SecondEnemyMinotaur = SpawnEnemy(200, 0, 
-	285, 285, 175,
+	SecondEnemyMinotaur = SpawnEnemy(1000, 200, 
+	235, 235, 135,
 	true,
-	-50, -100, 50, 30,
+	-60, -200, 120, 30,
 	200, 2, 1, 
 	'SecondEnemyMinotaur'
 	);			
@@ -2263,9 +2282,9 @@ function CreateLevel()
 	
 	//Add the draw size and such to it
 	ThirdEnemyMinotaur = SpawnEnemy(200, 0, 
-	285, 285, 175,
+	245, 245, 135,
 	true,
-	-50, -100, 50, 30,
+	-60, -200, 120, 30,
 	200, 2, 2, 
 	'ThirdEnemyMinotaur'
 	);		
@@ -2273,10 +2292,10 @@ function CreateLevel()
 
 	/*Here with function WIP Still it needs color maybe and health and other complementary like showHelp*/
 	
-	ForthEnemyMinotaur = SpawnEnemy(200, 0, 
-	285, 285, 175,
+	ForthEnemyMinotaur = SpawnEnemy(500, 0, 
+	275, 275, 150,
 	true,
-	-50, -100, 50, 30,
+	-60, -200, 120, 30,
 	200, 2, 3, 
 	'ForthEnemyMinotaur'
 	);	
@@ -2941,7 +2960,7 @@ function clamp(number, min, max)
 
 function StartGameButtonPress()
 {
-	MainSoundtrack.play(); //It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
+	//MainSoundtrack.play(); //It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
 	MainSoundtrack.loop = true; 	
 	GetUniverse().BeginPlayGame();
 	//document.getElementsByClassName('MenuButtons').style.visibility = 'hidden';
