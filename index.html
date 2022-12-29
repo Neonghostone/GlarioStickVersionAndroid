@@ -185,7 +185,7 @@ class Universe
 	{
 		this.level = 0;	
 		
-		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 250, 2, "CharacterGladiatorHeraclit.png", "Pawn", 
+		GetUniverse().MainCharacter = spawnActor('MulliusMainChar', 50, 250, 2, "MulliusShieldAndSwordIdle.png", "Pawn", 
 		0 ,10000, 1, 1, false
 		,"normal", 0
 		);   //Mullius main character, player controlled
@@ -311,15 +311,15 @@ class Actor
 		
 		//Textures
 		this.mainTexture = mainTexture;//"BloodForWebGladiators1.png";
-		this.PrepareAttackTexture = "CharacterGladiatorHeraclitSwordPrepare.png"; //Prepare here
-		this.UnleashAttackTexture = "CharacterGladiatorHeraclitUnleashPart2.png";
+		this.PrepareAttackTexture = "MulliusShieldAndSwordPrepareAttack.png"; //Prepare here
+		this.UnleashAttackTexture = "MulliusShieldAndSwordAndSheldJustUnleashedAttack.png";
 		this.BlockingTexture = "MulliusShieldProtecting.png";	//WIP	
 		this.DieTexture = "MulliusDeadRight.png";	
 	
 		//Left textrues
-		this.IdleTextureLeft = "CharacterGladiatorHeraclitLeft.png";	
-		this.UnleashAttackTextureLeft = "CharacterGladiatorHeraclitUnleashPart2Left.png";			
-		this.UnleashAttackTexturePrepareLeft = "CharacterGladiatorHeraclitSwordPrepareLeft.png";
+		this.IdleTextureLeft = "MulliusShieldAndSwordIdleLeft.png";	
+		this.UnleashAttackTextureLeft = "MulliusShieldAndSwordAndSheldJustUnleashedAttackLeft.png";	
+		this.UnleashAttackTexturePrepareLeft = "MulliusShieldAndSwordPrepareAttackLeft.png";
 		this.BlockingTextureLeft = "MulliusShieldProtectingLeft.png";	//WIP	
 		this.DieTextureLeft = "MulliusDeadLeft.png";	
 		
@@ -2324,7 +2324,7 @@ pname)
 	0, 10000, 0, 0, false, 
 	'Idle', pLevel);
 	
-		//AIController
+		//AIController Make enemy 1 enemy 2 enemy 3 enemy 4 enemy 5
 	AIControllerSpawnedIfAny = spawnActor('AIBiController1', 25, 0, 2, "GladiatorLenemieRed.png", "BiController",
 	SpawnedEnemyChar,100000,0,0,false );   //Controller bi so both for player and others
 	AIControllerSpawnedIfAny.SetState("AIGladiatorRoamLookFor");
@@ -2335,7 +2335,7 @@ pname)
 	SpawnedEnemyChar.collisionSizeMaxX1 = pcollisionSizeMaxX1; //red max
 	SpawnedEnemyChar.collisionSizeMaxY1 = pcollisionSizeMaxY1;
 	SpawnedEnemyChar.YOffset = +pYOffset; //Draw offset		
-	SpawnedEnemyChar.XOriginOffset = 65; //So we set land distance when walking, draws			
+	SpawnedEnemyChar.XOriginOffset = 100; //So we set land distance when walking, draws			
 	SpawnedEnemyChar.YOriginOffset = 100; //So we set land distance when walking, draws
 	SpawnedEnemyChar.PrepareAttackTexture = "CharacterMinotaur128colorPrepareAttack.png"; //Prepare here
 	SpawnedEnemyChar.UnleashAttackTexture = "CharacterMinotaur128colorUnleash.png";
