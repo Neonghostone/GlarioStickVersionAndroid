@@ -613,7 +613,7 @@ class Actor
 			this.bCanStopJumpNow = false;		
 			
 			this.SetState("Jumping");
-			this.AirActualSpeed = -10.0;
+			this.AirActualSpeed = -12.0;
 			this.bCanStopJumpNow = false;					
 
 		} 
@@ -878,7 +878,7 @@ class Actor
 					this.AirActualSpeed = 0;
 					
 				
-					if( this.ActorState == 'Jumping' || this.ActorState == 'Bouncing'  ) 
+					if( this.ActorState == 'Jumping' || this.ActorState == 'Bouncing'  && this.constructor.name == 'Pawn') 
 					{
 						
 						if( this.ActorState == "Jumping" ) 
@@ -902,7 +902,7 @@ class Actor
 							this.SetState("Idle");
 							this.bCanStopJumpNow = false;
 										
-							if( ArrayOfActorsColliding[0].constructor.name == 'Pawn'  )
+							if( ArrayOfActorsColliding[0].constructor.name == 'Pawn'   && this.constructor.name == 'Pawn')
 							{
 
 								this.BeginBounce( ArrayOfActorsColliding[0] );//WIP should not be able to move left right while bouncing and go to a direction 
@@ -2264,9 +2264,9 @@ function CreateLevel()
 	FirstEnemyMinotaur = SpawnEnemy(200, 0, 
 	225, 225, 130,
 	true,
-	-60, -200, 100, 30,
+	-60, -200, 100, 20,
 	200, 2, 0, 
-	'FirstEnemyMinotaur'
+	'FirstEnemyStick'
 	);			
 			
 		
@@ -2274,9 +2274,9 @@ function CreateLevel()
 	SecondEnemyMinotaur = SpawnEnemy(1000, 200, 
 	235, 235, 135,
 	true,
-	-60, -200, 100, 30,
+	-60, -200, 100, 20,
 	200, 2, 1, 
-	'SecondEnemyMinotaur'
+	'SecondEnemyStick'
 	);			
 			
 	
@@ -2284,9 +2284,9 @@ function CreateLevel()
 	ThirdEnemyMinotaur = SpawnEnemy(200, 0, 
 	245, 245, 135,
 	true,
-	-60, -200, 100, 30,
+	-60, -200, 100, 20,
 	200, 2, 2, 
-	'ThirdEnemyMinotaur'
+	'ThirdEnemyStick'
 	);		
 		
 
@@ -2295,9 +2295,9 @@ function CreateLevel()
 	ForthEnemyMinotaur = SpawnEnemy(500, 0, 
 	275, 275, 150,
 	true,
-	-60, -200, 120, 30,
+	-60, -200, 120, 20,
 	200, 2, 3, 
-	'ForthEnemyMinotaur'
+	'ForthEnemyStick'
 	);	
 
 	SpawnRudis(500, 0, 0);
@@ -2314,13 +2314,14 @@ pDrawSizeX, pDrawSizeY, pYOffset,
 pbAIControlled, 
 pCollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, 
 phealth, pTeam, pLevel, 
-pname)
+pname, 
+EnemyType)
 {
 	let SpawnedEnemyChar;
 	let AIControllerSpawnedIfAny;
 
 	SpawnedEnemyChar = spawnActor(pname, px, py, 2,
-	"CharacterMinotaur128color.png", "Pawn",
+	"GladiatorLenemieRed.png", "Pawn",
 	0, 10000, 0, 0, false, 
 	'Idle', pLevel);
 	
@@ -2337,15 +2338,15 @@ pname)
 	SpawnedEnemyChar.YOffset = +pYOffset; //Draw offset		
 	SpawnedEnemyChar.XOriginOffset = 80; //So we set land distance when walking, draws			
 	SpawnedEnemyChar.YOriginOffset = 100; //So we set land distance when walking, draws
-	SpawnedEnemyChar.PrepareAttackTexture = "CharacterMinotaur128colorPrepareAttack.png"; //Prepare here
-	SpawnedEnemyChar.UnleashAttackTexture = "CharacterMinotaur128colorUnleash.png";
+	SpawnedEnemyChar.PrepareAttackTexture = "GladiatorLenemieRedPrepareAttack.png"; //Prepare here
+	SpawnedEnemyChar.UnleashAttackTexture = "GladiatorLenemieRedUnleashAttack.png";
 	SpawnedEnemyChar.BlockingTexture = "GladiatorLenemieRedBlockWithShield.png";	//WIP	
-	SpawnedEnemyChar.DieTexture = "CharacterMinotaur128colorDIed.png";	//WIP			
-	SpawnedEnemyChar.IdleTextureLeft = "CharacterMinotaur128colorLeft.png";	
-	SpawnedEnemyChar.UnleashAttackTextureLeft = "CharacterMinotaur128colorUnleashLeft.png";			
-	SpawnedEnemyChar.UnleashAttackTexturePrepareLeft = "CharacterMinotaur128colorPrepareAttackLeft.png";
+	SpawnedEnemyChar.DieTexture = "GladiatorLenemieRedDeadRight.png";	//WIP			
+	SpawnedEnemyChar.IdleTextureLeft = "GladiatorLenemieRedLeft.png";	
+	SpawnedEnemyChar.UnleashAttackTextureLeft = "GladiatorLenemieRedUnleashAttackLeft.png";			
+	SpawnedEnemyChar.UnleashAttackTexturePrepareLeft = "GladiatorLenemieRedPrepareAttackLeft.png";
 	SpawnedEnemyChar.BlockingTextureLeft = "GladiatorLenemieRedBlockWithShieldLeft.png"	//WIP	
-	SpawnedEnemyChar.DieTextureLeft = "CharacterMinotaur128colorDIed.png";	//WIP									
+	SpawnedEnemyChar.DieTextureLeft = "GladiatorLenemieRedDeadLeft.png";	//WIP									
 	SpawnedEnemyChar.bHasHealthBarsOnHead = true;						
 	SpawnedEnemyChar.DrawSizeX = pDrawSizeX;
 	SpawnedEnemyChar.DrawSizeY = pDrawSizeY;
