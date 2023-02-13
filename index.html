@@ -2315,7 +2315,7 @@ pbAIControlled,
 pCollisionSizeMinX1, pcollisionSizeMinY1, pcollisionSizeMaxX1, pcollisionSizeMaxY1, 
 phealth, pTeam, pLevel, 
 pname, 
-EnemyType)
+EnemyType = "RedStickman")
 {
 	let SpawnedEnemyChar;
 	let AIControllerSpawnedIfAny;
@@ -2325,7 +2325,7 @@ EnemyType)
 	0, 10000, 0, 0, false, 
 	'Idle', pLevel);
 	
-		//AIController Make enemy 1 enemy 2 enemy 3 enemy 4 enemy 5
+	//AIController Make enemy 1 enemy 2 enemy 3 enemy 4 enemy 5
 	AIControllerSpawnedIfAny = spawnActor('AIBiController1', 25, 0, 2, "GladiatorLenemieRed.png", "BiController",
 	SpawnedEnemyChar,100000,0,0,false );   //Controller bi so both for player and others
 	AIControllerSpawnedIfAny.SetState("AIGladiatorRoamLookFor");
@@ -2350,6 +2350,12 @@ EnemyType)
 	SpawnedEnemyChar.bHasHealthBarsOnHead = true;						
 	SpawnedEnemyChar.DrawSizeX = pDrawSizeX;
 	SpawnedEnemyChar.DrawSizeY = pDrawSizeY;
+
+	//EnemyType == "RedStickman"
+	//EnemyType == "EvilSpartan"
+	//EnemyType == "EvilMinotaur"
+	//EnemyType == "EvilMage"
+
 
 
 	return SpawnedEnemyChar;
@@ -2992,7 +2998,7 @@ function ChangeDifChangeButtonPress()
 function HandlePawnDead(PawnThatDied)
 {
 	
-	if( PawnThatDied.name == "PawnEnemyGuardianOfRudisFirstArena" ) 
+	if( PawnThatDied.name == "ForthEnemyStick" ) 
 	{
 		
 		SpawnRudis(500, 200, 3);
