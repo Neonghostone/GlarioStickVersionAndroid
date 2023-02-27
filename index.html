@@ -118,6 +118,7 @@ var TestPlatform=new Image();
 var BGImage=new Image();
 var COSImage=new Image();
 var MainSoundtrack = new Audio('MainMusic.ogg'); //WIP 
+
 //MainSoundtrack.play(); It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
 //MainSoundtrack.loop = true; 
 
@@ -1164,6 +1165,8 @@ class Actor
 					this.InternalTexture.setAttribute("src", this.UnleashAttackTexture);	
 				}
 				
+				PlaySound('sword2.ogg');
+				
 				DoBladeCollisionCheck(this, this.AttackDistanceReach);
 				
 				this.HandleOfAttackDuration = setInterval( this.FinishAttack.bind(this), this.AttackDuration);
@@ -1266,6 +1269,7 @@ class Actor
 		else if(  IsActorFacingOtherActor(ActorGettingHit, this) && ActorGettingHit.OffensiveState == 'Blocking'  ) 
 		{ 
 			GetUniverse().InstanceGameplayFloatingText( this.x, this.y, "Block!", 1000.0, 'yellow', 0.5, this.level  );
+			PlaySound('HarderMetalHits.ogg' );
 			this.GetStuned(GetRandomFloat(1000, 1500, 2));
 		}
 		
@@ -3031,6 +3035,14 @@ function HandlePawnDead(PawnThatDied)
 		
 	}
 	
+	
+}
+
+function PlaySound(SoundToPlay = 'jupiter_loading.ogg')
+{
+	let NewSoundToplay = new Audio(SoundToPlay); //WIP 	
+	NewSoundToplay.play();
+	console.log("FROM Index ");
 	
 }
 
