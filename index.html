@@ -1953,14 +1953,13 @@ state, level )
 	return GetUniverse().actorsIngame[GetUniverse().actorsIngame.length-1]; 	
 }
 
-
+//Desc: Neongho: 
 function BeginPlay() 
 {
 	window.requestAnimationFrame(draw);	
        
 	
 
-	
     if (document.images) 
     { 
 	
@@ -1969,7 +1968,16 @@ function BeginPlay()
 		var ButtonOfCanvasMoveLeft = document.getElementById('MoveLeftButtonCanvas');
 	
 	
-		
+
+
+
+           /*
+	         if (document.exitFullscreen) 
+                exit later
+          } */  
+	        	
+
+
 		if (ButtonOfCanvasMoveLeft.getContext) 
 		{
 			var ctxx = ButtonOfCanvasMoveLeft.getContext('2d');
@@ -3012,6 +3020,20 @@ function StartGameButtonPress()
 	document.getElementsByClassName('PlayButtons')[3].style.visibility = 'visible';	
 	document.getElementsByClassName('PlayButtons')[4].style.visibility = 'visible';	
 	//document.getElementById('PlayButton').style.display = "none";;	
+
+        if (canvas.requestFullscreen) 
+        {
+            canvas.requestFullscreen();
+        } 
+        else if (canvas.webkitRequestFullscreen) 
+        { /* Safari */
+            canvas.webkitRequestFullscreen();
+        } 
+        else if (canvas.msRequestFullscreen) 
+        { /* IE11 */
+            canvas.msRequestFullscreen();
+        } 
+
 	
 }
 
