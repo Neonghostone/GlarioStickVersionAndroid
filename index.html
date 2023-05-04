@@ -15,7 +15,7 @@
 <body onload="">
 	<div class="maindiv" id="maindiv">
 		<div class="canvasdiv" id="canvasdiv">
-			<canvas class="canvas"id="canvas" width="1000" height="500">
+			<canvas class="canvas"id="canvas" width="2000" height="1000">
 			Your web browser does not support canvas.
 			</canvas>
 			
@@ -1953,7 +1953,7 @@ state, level )
 	return GetUniverse().actorsIngame[GetUniverse().actorsIngame.length-1]; 	
 }
 
-//Desc: Neongho: this is when the game begins to play
+//Desc: Neongho: 
 function BeginPlay() 
 {
 	window.requestAnimationFrame(draw);	
@@ -3003,7 +3003,6 @@ function clamp(number, min, max)
 	return Math.max(min, Math.min(number, max));
 }
 
-//Desc: Neongho: this is the button press
 function StartGameButtonPress()
 {
 	//MainSoundtrack.play(); //It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
@@ -3022,18 +3021,19 @@ function StartGameButtonPress()
 	document.getElementsByClassName('PlayButtons')[4].style.visibility = 'visible';	
 	//document.getElementById('PlayButton').style.display = "none";;	
 
-        /*if (canvas.requestFullscreen) 
+
+        if (canvasdiv.requestFullscreen) 
         {
-            canvas.requestFullscreen();
+            canvasdiv.requestFullscreen();
         } 
-        else if (canvas.webkitRequestFullscreen) 
-        { 
-            canvas.webkitRequestFullscreen();
+        else if (canvasdiv.webkitRequestFullscreen) 
+        { /* Safari */
+            canvasdiv.webkitRequestFullscreen();
         } 
-        else if (canvas.msRequestFullscreen) safari...
-        { 
-            canvas.msRequestFullscreen();
-        } */
+        else if (canvasdiv.msRequestFullscreen) 
+        { /* IE11 */
+            canvasdiv.msRequestFullscreen();
+        } 
 
 	
 }
