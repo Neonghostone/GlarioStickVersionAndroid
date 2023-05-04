@@ -3022,19 +3022,34 @@ function StartGameButtonPress()
 	//document.getElementById('PlayButton').style.display = "none";;	
 
 
-        if (canvasdiv.requestFullscreen) 
-        {
-            canvasdiv.requestFullscreen();
-        } 
-        else if (canvasdiv.webkitRequestFullscreen) 
-        { /* Safari */
-            canvasdiv.webkitRequestFullscreen();
-        } 
-        else if (canvasdiv.msRequestFullscreen) 
-        { /* IE11 */
-            canvasdiv.msRequestFullscreen();
-        } 
+    if (canvasdiv.requestFullscreen) 
+    {
+         // canvasdiv.requestFullscreen();
+    } 
+    else if (canvasdiv.webkitRequestFullscreen) 
+    { /* Safari */
+          //canvasdiv.webkitRequestFullscreen();
+    } 
+    else if (canvasdiv.msRequestFullscreen) 
+    { /* IE11 */
+          //canvasdiv.msRequestFullscreen();
+    } 
 
+	
+	
+	var docu = document.querySelector('.maindiv');	
+    //Convert degrees to radian 
+    var rad = 180 * Math.PI / 180;
+
+    //Set the origin to the center of the image
+    //maindiv.translate(x + width / 2, y + height / 2);
+
+    //Rotate the canvas around the origin
+	docu.style.webkitTransform = 'rotate(' + 90 + 'deg)';	
+    //document.getElementsByClassName("maindiv").style.webkitTransform = 'rotate(' + 90 + 'deg)';	
+	
+	
+	
 	
 }
 
