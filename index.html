@@ -2633,6 +2633,19 @@ function draw(timestamp)
     deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
 
 
+	console.log("FROM Draw function  rotating"); 
+	//Rotate so we have the document 
+	var docu = document.querySelector('.maindiv');	
+    //Convert degrees to radian 
+    //var rad = 180 * Math.PI / 180;
+
+    //Set the origin to the center of the image
+    //maindiv.translate(x + width / 2, y + height / 2);
+
+    //Rotate the canvas around the origin
+	//docu.style.webkitTransform = 'rotate( ' + 90 + 'deg  )';	
+
+
 
     //clean canvas screen
     canvas.width=canvas.width;
@@ -2738,6 +2751,9 @@ function draw(timestamp)
 			ctx.fillText("Press any key to continue!", 300, 300);						
 			
 		} 
+			
+
+			
 			
 	lastTimestamp = timestamp;	
 } //End draw
@@ -3021,22 +3037,27 @@ function StartGameButtonPress()
 	document.getElementsByClassName('PlayButtons')[4].style.visibility = 'visible';	
 	//document.getElementById('PlayButton').style.display = "none";;	
 
-
-    if (canvasdiv.requestFullscreen) 
+    //canvasdiv
+    if (maindiv.requestFullscreen) 
     {
-         // canvasdiv.requestFullscreen();
+        maindiv.requestFullscreen();
+		screen.orientation.lock("landscape-primary");		 
     } 
-    else if (canvasdiv.webkitRequestFullscreen) 
+    else if (maindiv.webkitRequestFullscreen) 
     { /* Safari */
-          //canvasdiv.webkitRequestFullscreen();
+        maindiv.webkitRequestFullscreen();
+		screen.orientation.lock("landscape-primary");		  
     } 
-    else if (canvasdiv.msRequestFullscreen) 
+    else if (maindiv.msRequestFullscreen) 
     { /* IE11 */
-          //canvasdiv.msRequestFullscreen();
+        maindiv.msRequestFullscreen();
+		screen.orientation.lock("landscape-primary");
     } 
 
 	
 	
+	
+	/*
 	var docu = document.querySelector('.maindiv');	
     //Convert degrees to radian 
     var rad = 180 * Math.PI / 180;
@@ -3047,7 +3068,7 @@ function StartGameButtonPress()
     //Rotate the canvas around the origin
 	docu.style.webkitTransform = 'rotate(' + 90 + 'deg)';	
     //document.getElementsByClassName("maindiv").style.webkitTransform = 'rotate(' + 90 + 'deg)';	
-	
+	*/
 	
 	
 	
