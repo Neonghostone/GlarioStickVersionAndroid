@@ -50,12 +50,12 @@
         background-color: black;
         left: 0;
         top: 0;
-        transform: translate(-0%, -0%);
-        -webkit-transform: translate(-0%, -0%);
-        width: 1000px;
-        height: 1000px;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        width: 505px;
+        height: 305px;
         margin: 0px;
-        padding: 500px;
+        padding: 250px;
         position: relative;
         }
 		
