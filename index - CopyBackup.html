@@ -97,7 +97,13 @@
 
 //LIST
 //Task list 
-//Draw on devvug 4 points and use the 4 points on collision check NOT JUST 2!!
+//Lifespan LifeTime and Draw the otherd enemies
+//Make sure that the bug of the die resurrection does not occur
+//There is bGoingRight and bMovingLeft use em in a way you used DESIREDLOCATION good for pathfinding
+//Bug sometimes the persecution mode does not work 
+//Make jumping AI on you trying to damage you
+//Cooldown for the jump
+//for jumping to 
 
 //Essential
 //Make sure that the size of canvas is right adjust a bit but might be good 
@@ -384,7 +390,7 @@ class Actor
 		
 		this.RandomFloatBounceSpeed = 10; //Automatically generated on the run
 		this.TouchingMemoryActors = [];
-		this.AttackDistanceReach = 250; //Distance the attacks reach by default
+		this.AttackDistanceReach = 150;
 	} 
 	
 	//List of states 
@@ -522,7 +528,7 @@ class Actor
 		//draw its origin
 		ctx.beginPath();
 		ctx.rect(this.x + this.XOriginOffset, this.y + this.YOriginOffset, 10, 10);
-		ctx.strokeStyle = "yellow";	
+		ctx.strokeStyle = "green";	
 		ctx.stroke();
 
 
@@ -538,32 +544,9 @@ class Actor
 		ctx.strokeStyle = "red";	
 		ctx.stroke();		
 		
-		//draw the collision light blue
-		ctx.beginPath();
-		ctx.rect( ( this.x + this.XOriginOffset ) + this.collisionSizeMinX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMaxY1, 10, 10);
-		ctx.strokeStyle = "green";	
-		ctx.stroke();
-
-		//draw the collision light blue
-		ctx.beginPath();
-		ctx.rect(  ( this.x + this.XOriginOffset ) + this.collisionSizeMaxX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMinY1, 10, 10);
-		ctx.strokeStyle = "purple";	
-		ctx.stroke();			
-
-		//draw the collision light blue
-		ctx.beginPath();
-		ctx.rect(  this.x, this.y , 10, 10);
-		ctx.strokeStyle = "black";	
-		ctx.stroke();			
-				
-		
 		ctx.fillStyle = 'White'; //It does not give color to a image
 		ctx.font = "30px Arial";
 		ctx.fillText(this.ActorState, this.x, this.y);
-		
-		ctx.fillStyle = 'White'; //It does not give color to a image
-		ctx.font = "30px Arial";
-		ctx.fillText(this.name, this.x, this.y+20);		
 
 	}
 	
@@ -656,7 +639,7 @@ class Actor
 	
 	BeginBounce( PawnBouncingOn )
 	{ 	
-		if( PawnBouncingOn.ActorState != 'TotallyStunned' && this.constructor.name != 'Actor' )
+		if( PawnBouncingOn.ActorState != 'TotallyStunned' )
 		{
 			PawnBouncingOn.GetTotallyStuned( GetRandomFloat(1000, 3000, 1) );
 		}
@@ -726,38 +709,19 @@ class Actor
 			//&& value.constructor.name != "Pawn"									//Don't collide with dead people
 			if( value != self && value.level == self.level && value.bHasCollision && ( value.ActorState != 'Dead' )  ) 
 			{
-				if( DoesThisCollideV2( 
-				(self.x + self.XOriginOffset) + self.collisionSizeMinX1,
-				(self.y + self.YOriginOffset) + self.collisionSizeMinY1,
-				(self.x + self.XOriginOffset) + self.collisionSizeMaxX1,				
-				(self.y + self.YOriginOffset) + self.collisionSizeMaxY1,				
-				( value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
-				( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
-				( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
-				( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 )  
-				|| 
-				DoesThisCollideV2( 
-				( value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
-				( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
-				( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
-				( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1,				
-				(self.x + self.XOriginOffset) + self.collisionSizeMinX1,
-				(self.y + self.YOriginOffset) + self.collisionSizeMinY1,
-				(self.x + self.XOriginOffset) + self.collisionSizeMaxX1,				
-				(self.y + self.YOriginOffset) + self.collisionSizeMaxY1) 
-				)  								
-				{
-
+				if( DoesThisCollide( self.x + self.XOriginOffset, self.y + self.YOriginOffset, 
+				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
+				 ( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 ) ) 
 				
+				{
 					actorsWhichIsCollidingWith.push(value);
 				}
 			}
 			
 		
 		}
-		
-
-		 
 		 
 		return actorsWhichIsCollidingWith;
 	}
@@ -775,29 +739,13 @@ class Actor
 			//&& value.constructor.name != "Pawn"
 			if( value != self && value.level == self.level && value.bHasCollision && ( value.ActorState != 'Dead' )   ) 
 			{
-				if( DoesThisCollideV2( 
-				(self.x + self.XOriginOffset ) + self.collisionSizeMinX1,
-				(self.y + self.YOriginOffset) + self.collisionSizeMinY1,
-				(self.x + self.XOriginOffset) + self.collisionSizeMaxX1,				
-				(self.y + self.YOriginOffset) + self.collisionSizeMaxY1,				
-				( value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
-				( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
-				( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
-				( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 )  
-				|| 
-				DoesThisCollideV2( 
-				( value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
-				( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
-				( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
-				( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1,				
-				(self.x + self.XOriginOffset) + self.collisionSizeMinX1,
-				(self.y + self.YOriginOffset) + self.collisionSizeMinY1,
-				(self.x + self.XOriginOffset) + self.collisionSizeMaxX1,				
-				(self.y + self.YOriginOffset) + self.collisionSizeMaxY1) 
-				)  		
-				{
+				if( DoesThisCollide( self.x + self.XOriginOffset + 20, self.y + self.YOriginOffset - 20, 
+				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
+				 ( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 ) ) 
 				
-		
+				{
 					actorsWhichIsCollidingWith.push(value);
 				}
 			}
@@ -820,31 +768,18 @@ class Actor
 			//&& value.constructor.name != "Pawn"
 			if( value != self && value.level == self.level && value.bHasCollision && ( value.ActorState != 'Dead' )   ) 
 			{
-				if( DoesThisCollideV2( 
-				(self.x + self.XOriginOffset) + self.collisionSizeMinX1,
-				(self.y + self.YOriginOffset) + self.collisionSizeMinY1,
-				(self.x + self.XOriginOffset) + self.collisionSizeMaxX1,				
-				(self.y + self.YOriginOffset) + self.collisionSizeMaxY1,				
-				( value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
-				( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
-				( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
-				( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 )  
-				|| 
-				DoesThisCollideV2( 
-				( value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
-				( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
-				( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
-				( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1,				
-				(self.x + self.XOriginOffset) + self.collisionSizeMinX1,
-				(self.y + self.YOriginOffset) + self.collisionSizeMinY1,
-				(self.x + self.XOriginOffset) + self.collisionSizeMaxX1,				
-				(self.y + self.YOriginOffset) + self.collisionSizeMaxY1) 
-				)  		
-				{		
+				if( DoesThisCollide( self.x + self.XOriginOffset - 20, self.y + self.YOriginOffset - 20, 
+				 (value.x + value.XOriginOffset) + value.collisionSizeMinX1 ,
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMinY1,
+				 ( value.x + value.XOriginOffset ) + value.collisionSizeMaxX1, 
+				 ( value.y + value.YOriginOffset ) + value.collisionSizeMaxY1 ) ) 
+				
+				{
 					actorsWhichIsCollidingWith.push(value);
 				}
 			}
 			
+		
 		}
 		 
 		return actorsWhichIsCollidingWith;
@@ -882,7 +817,7 @@ class Actor
 	
 		if( GetUniverse().bDrawDebug && this.level == GetUniverse().level  )
 		{
-			//this.DrawDebugStuff();
+			this.DrawDebugStuff();
 		}
 		
 		if( this.level == GetUniverse().level && this.bHasHealthBarsOnHead )
@@ -898,8 +833,7 @@ class Actor
 			
 			ArrayOfActorsCollidingRight = this.isActorCollidingWithSomethingRightSide();	
 			
-		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide(); //GOOD 
-
+		    ArrayOfActorsCollidingLeft = this.isActorCollidingWithSomethingLeftSide();
 			
 			//Conjunction of all colliding actors
 			ArrayOfActorsCollidingToTouch = ArrayOfActorsCollidingToTouch.concat(this.isActorCollidingWithSomething(), this.isActorCollidingWithSomethingRightSide(), this.isActorCollidingWithSomethingLeftSide() );
@@ -938,28 +872,15 @@ class Actor
 
 		if(this.bMoving ) 
 		{ 
-			
-			if(this.bGoingRight  
-			&& this.ActorState != "Bouncing" 
-			&& this.ActorState != "TotallyStunned" 
-			&& this.ActorState != "Dead" 
-			&& !IsThereActorKind('Pawn', ArrayOfActorsCollidingRight)
-			&& !IsThereActorCollidingRightAndAbove(this, ArrayOfActorsCollidingRight) )
+	
+			if(this.bGoingRight && ArrayOfActorsCollidingRight.length <= 0 && this.ActorState != "Bouncing" && this.ActorState != "TotallyStunned" &&  this.ActorState != "Dead" ) 
 			{
 				this.x += SpeedOfMainCharacter; 
 			} 
-					
-			if(!this.bGoingRight 
-			&& this.ActorState != "Bouncing" 
-			&& this.ActorState != "TotallyStunned" 
-			&& this.ActorState != "Dead" 
-			&& !IsThereActorKind('Pawn', ArrayOfActorsCollidingLeft  ) 
-			&& !IsThereActorCollidingLeftAndAbove(this, ArrayOfActorsCollidingLeft) 
-			)
+			if(!this.bGoingRight && ArrayOfActorsCollidingLeft.length <= 0 && this.ActorState != "Bouncing" && this.ActorState != "TotallyStunned" &&  this.ActorState != "Dead"  )
 			{ 
 				this.x -= SpeedOfMainCharacter;	
-			}				
-				
+			}
 		}
 		
 		if( ArrayOfActorsColliding.length > 0 )
@@ -985,7 +906,7 @@ class Actor
 							this.SetState("Idle");
 							this.bCanStopJumpNow = false;
 											
-							if( ArrayOfActorsColliding[0].constructor.name == 'Pawn' && this.constructor.name == 'Pawn'  )
+							if( ArrayOfActorsColliding[0].constructor.name == 'Pawn' )
 							{ 
 								this.BeginBounce( ArrayOfActorsColliding[0] );//WIP should not be able to move left right while bouncing and go to a direction 
 							}
@@ -1054,8 +975,16 @@ class Actor
 			}
 							
 			
+			/* left here just in case
+			if( this.name == 'MulliusMainChar' )
+			{
+				console.log("FROM Index actor tick ticking cannot stop jump now "+this.AirActualSpeed);						
+			}
+			*/
+					
+				
 
-		
+			
 			/*
 			if(this.bCanStopJumpNow == false )
 			{
@@ -1095,7 +1024,12 @@ class Actor
 		{
 			//if(this.bCanStopJumpNow == false ) 
 			//{
-
+				/*
+				if(this.name == 'MulliusMainChar' ) 
+				{
+					console.log("FROM Mullius character the actual speed is "+this.AirActualSpeed);
+				}
+				*/
 				
 				this.y += 1.0 * this.AirActualSpeed;
 				
@@ -1400,7 +1334,7 @@ class Actor
 	//Desc: Takes damage
 	TakeDamage(DamageToTake)
 	{
-		//this.SpawnBlood();
+		this.SpawnBlood();
 		
 		this.ActorHealth = clamp( this.ActorHealth -= DamageToTake, 0, 10000 );
 		
@@ -2357,7 +2291,7 @@ function CreateLevel()
 	
 	//Enemies spawning make function spawn enemy with params
 	
-	
+		
 	FirstEnemyMinotaur = SpawnEnemy(200, 0, 
 	225, 225, 130,
 	true,
@@ -2365,8 +2299,9 @@ function CreateLevel()
 	200, 2, 0, 
 	'FirstEnemyStick'
 	);			
-	FirstEnemyMinotaur.ActorHealth = 25; 		
-	
+			
+		
+
 	SecondEnemyMinotaur = SpawnEnemy(1000, 200, 
 	235, 235, 135,
 	true,
@@ -2374,9 +2309,9 @@ function CreateLevel()
 	200, 2, 1, 
 	'SecondEnemyStick'
 	);			
-	SecondEnemyMinotaur.ActorHealth = 30; 				
+			
 	
-
+	//Add the draw size and such to it
 	ThirdEnemyMinotaur = SpawnEnemy(200, 0, 
 	245, 245, 135,
 	true,
@@ -2386,7 +2321,8 @@ function CreateLevel()
 	);		
 		
 
-
+	/*Here with function WIP Still it needs color maybe and health and other complementary like showHelp*/
+	
 	ForthEnemyMinotaur = SpawnEnemy(500, 0, 
 	275, 275, 150,
 	true,
@@ -2394,9 +2330,7 @@ function CreateLevel()
 	200, 2, 3, 
 	'ForthEnemyStick'
 	);	
-	
-	
-	
+
 	//SpawnRudis(500, 0, 0);
 
 	
@@ -2703,6 +2637,8 @@ function draw(timestamp)
     requestAnimationFrame(draw);
     deltaTime = (timestamp - lastTimestamp) / perfectFrameTime;
 
+
+	console.log("FROM Draw function  rotating"); 
 	//Rotate so we have the document 
 	var docu = document.querySelector('.maindiv');	
     //Convert degrees to radian 
@@ -2853,13 +2789,13 @@ function DoesThisCollide( originX, originY, SizeXMin1, SizeYMin1, SizeXMax1, Siz
 function DoesThisCollideV2( PointOriginMinX, PointOriginMinY, PointOriginMaxX, PointOriginMaxY, SizeXMin1, SizeYMin1, SizeXMax1, SizeYMax1  ) 	
 {
 
-	if( PointOriginMinX <= SizeXMax1 ) //MIN CORNER Left
+	if( PointOriginMinX < SizeXMax1 ) //First X
 	{ 
-		if( PointOriginMinX >= SizeXMin1 ) 
+		if( PointOriginMinX > SizeXMin1 ) 
 		{ 
-			if( PointOriginMinY <= SizeYMax1)  
+			if( PointOriginMinY < SizeYMax1) //Then Y 
 			{
-				if(  PointOriginMinY >= SizeYMin1 ) 
+				if(  PointOriginMinY > SizeYMin1 ) 
 				{	
 					return true; 				
 				} 
@@ -2867,143 +2803,25 @@ function DoesThisCollideV2( PointOriginMinX, PointOriginMinY, PointOriginMaxX, P
 		} 	
 	} 
 	
-	if( PointOriginMaxX <= SizeXMax1 ) //MAX CORNER Right
+	if( PointOriginMaxX < SizeXMax1 ) //First X
 	{ 
-		if( PointOriginMaxX >= SizeXMin1 ) 
+		if( PointOriginMaxX > SizeXMin1 ) 
 		{ 
-			if( PointOriginMaxY <= SizeYMax1)  
+			if( PointOriginMaxY < SizeYMax1) //Then Y 
 			{
-				if(  PointOriginMaxY >= SizeYMin1 ) 
-				{
-					return true; 							
-				} 
-			}
-		} 	
-	} 	
-	
-	if( PointOriginMinX <= SizeXMax1 ) //MIN + MAX CORNER Right EXTRA
-	{ 
-		if( PointOriginMinX >= SizeXMin1 ) 
-		{ 
-			if( PointOriginMaxY <= SizeYMax1 ) 
-			{
-				if(  PointOriginMaxY >= SizeYMin1 ) 
-				{
-					return true; 							
-				} 
-			}
-		} 	
-	} 	
-
-	if( PointOriginMaxX <= SizeXMax1 ) //MAX + MIN CORNER Right EXTRA // 
-	{ 
-		if( PointOriginMaxX >= SizeXMin1 ) 
-		{ 
-			if( PointOriginMinY <= SizeYMax1 ) 
-			{
-				if(  PointOriginMinY >= SizeYMin1 ) 
-				{
-					return true; 							
-				} 
-			}
-		} 	
-	} 		
-	
-	return false;
-}
-
-
-//Desc: Neongho:Global mathemathical function NOT IN USE WUP
-function DoesThisCollideIsPointInsideRectV2( PointOriginMinX, PointOriginMinY, PointOriginMaxX, PointOriginMaxY, SizeXMin1, SizeYMin1, SizeXMax1, SizeYMax1  ) 	
-{
-
-	if( PointOriginMinX <= SizeXMax1 ) //MIN CORNER Left
-	{ 
-		if( PointOriginMinX >= SizeXMin1 ) 
-		{ 
-			if( PointOriginMinY <= SizeYMax1)  
-			{
-				if(  PointOriginMinY >= SizeYMin1 ) 
+				if(  PointOriginMaxY > SizeYMin1 ) 
 				{	
-					return true; 				
-				} 
-			}
-		} 	
-	} 
-	
-	if( PointOriginMaxX <= SizeXMax1 ) //MAX CORNER Right
-	{ 
-		if( PointOriginMaxX >= SizeXMin1 ) 
-		{ 
-			if( PointOriginMaxY <= SizeYMax1)  
-			{
-				if(  PointOriginMaxY >= SizeYMin1 ) 
-				{
 					return true; 							
 				} 
 			}
 		} 	
 	} 	
 	
-	if( PointOriginMinX <= SizeXMax1 ) //MIN + MAX CORNER Right EXTRA
-	{ 
-		if( PointOriginMinX >= SizeXMin1 ) 
-		{ 
-			if( PointOriginMaxY <= SizeYMax1) 
-			{
-				if(  PointOriginMaxY >= SizeYMin1 ) 
-				{
-					return true; 							
-				} 
-			}
-		} 	
-	} 	
 
-	if( PointOriginMaxX <= SizeXMax1 ) //MAX + MIN CORNER Right EXTRA // 
-	{ 
-		if( PointOriginMaxX >= SizeXMin1 ) 
-		{ 
-			if( PointOriginMinY <= SizeYMax1) 
-			{
-				if(  PointOriginMinY >= SizeYMin1 ) 
-				{
-					return true; 							
-				} 
-			}
-		} 	
-	} 		
-	
 	return false;
 }
 
 
-
-/*
-		//draw the collision light blue
-		ctx.beginPath();
-		ctx.rect( ( this.x + this.XOriginOffset ) + this.collisionSizeMinX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMinY1, 10, 10);
-		ctx.strokeStyle = "blue";	
-		ctx.stroke();
-
-		//draw the collision light blue
-		ctx.beginPath();
-		ctx.rect(  ( this.x + this.XOriginOffset ) + this.collisionSizeMaxX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMaxY1, 10, 10);
-		ctx.strokeStyle = "red";	
-		ctx.stroke();		
-		
-		//draw the collision light green
-		ctx.beginPath();
-		ctx.rect( ( this.x + this.XOriginOffset ) + this.collisionSizeMinX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMaxY1, 10, 10);
-		ctx.strokeStyle = "green";	
-		ctx.stroke();
-
-		//draw the collision light purple
-		ctx.beginPath();
-		ctx.rect(  ( this.x + this.XOriginOffset ) + this.collisionSizeMaxX1, ( this.y + this.YOriginOffset )  + this.collisionSizeMinY1, 10, 10);
-		ctx.strokeStyle = "purple";	
-		ctx.stroke();			
-*/		
-		
 
 function DoBladeCollisionCheck(ActorSwinging, DistanceOfBlade)
 {
@@ -3326,89 +3144,8 @@ function PlaySound(SoundToPlay = 'jupiter_loading.ogg')
 {
 	let NewSoundToplay = new Audio(SoundToPlay); //WIP 	
 	NewSoundToplay.play();
-
+	console.log("FROM Index ");
 	
-}
-
-function IsThereActorKind(pKindOfActor, pArrayOfActors = [])
-{
-
-	
-	for( i = 0; i < pArrayOfActors.length; i++) 
-	{
-
-			
-		if ( pArrayOfActors[i].constructor.name == pKindOfActor ) 
-		{
-
-			return true; 
-		}
-	}
-
-	return false; 
-}
-
-function IsThereAboveActorColliding(ActorToCheck, pArrayOfActors = [] )
-{
-	blDidFind = false; 
-
-
-			
-	for( i = 0; i < pArrayOfActors.length; i++) 
-	{
-			
-		if ( pArrayOfActors[i].y + pArrayOfActors[i].YOriginOffset < ActorToCheck.y + ActorToCheck.YOriginOffset ) 
-		{
-			blDidFind = true; 
-		}	
-	}
-
-
-	return blDidFind; 
-}
-
-
-//Desc: Neongho: true  is below false is above
-function IsActorAboveOrBelow(ActorToCheck, ActorToCheckAgainst )
-{
-	return ActorToCheckAgainst.y + ActorToCheckAgainst.YOriginOffset < ActorToCheck.y + ActorToCheck.YOriginOffset  
-}
-
-
-function IsThereActorCollidingRightAndAbove(ActorToCheck, pArrayOfActors = [] )
-{
-	blDidFind = false; 
-			
-	for( i = 0; i < pArrayOfActors.length; i++) 
-	{		
-		if ( pArrayOfActors[i].x + pArrayOfActors[i].XOriginOffset > ActorToCheck.x + ActorToCheck.XOriginOffset  ) 
-		{			
-				if ( IsActorAboveOrBelow(ActorToCheck, pArrayOfActors[i]  ) )
-				{
-					blDidFind = true;
-				}	
-		}	
-	}
-	return blDidFind; 
-}
-
-function IsThereActorCollidingLeftAndAbove(ActorToCheck, pArrayOfActors = [] )
-{
-	blDidFind = false; 	
-	
-
-	for( i = 0; i < pArrayOfActors.length; i++) 
-	{
-		if  ( ActorToCheck.x + ActorToCheck.XOriginOffset >  pArrayOfActors[i].x + pArrayOfActors[i].XOriginOffset     ) 
-		{		
-			if( IsActorAboveOrBelow(ActorToCheck, pArrayOfActors[i] ) )
-			{
-				blDidFind = true; 			
-			}
-		}	
-	}
-
-	return blDidFind; 
 }
 
 
