@@ -20,7 +20,7 @@
 
 	<div class="maindiv" id="maindiv">
 		<div class="canvasdiv" id="canvasdiv">
-			<canvas class="canvas"id="canvas" width="700" height="400"   >
+			<canvas class="canvas"id="canvas" width="800" height="400"   >
 			Your web browser does not support canvas.
 			</canvas>
 			
@@ -57,9 +57,9 @@
 			</button>				
 			-->						
 
-			<button class='MenuButtons' id='PlayButton' onclick="StartGameButtonPress()" style='position:fixed; top:0px; height: 0px; height: 50px; width: 150px; left: 250px; color:rgba(255,255,255,0.75); background-color:rgba(0,0,255,0.75); '> PLAY! </button> 
-			<button class='MenuButtons' onclick="ChangeLanguageChangeButtonPress()" style='position:fixed; top:75px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(255,255,0,0.75); '> Language:English! </button> 
-			<button class='MenuButtons' onclick="ChangeDifChangeButtonPress()" style='position:fixed; top:150px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(0,255,0,0.75); '> Difficulty:Easy! </button> 
+			<button class='MenuButtons' id='PlayButton' onclick="StartGameButtonPress()" style='position:fixed; top:50px; height: 0px; height: 50px; width: 150px; left: 250px; color:rgba(255,255,255,0.75); background-color:rgba(0,0,255,0.75); '> PLAY! </button> 
+			<button class='MenuButtons' onclick="ChangeLanguageChangeButtonPress()" style='position:fixed; top:125px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(255,255,0,0.75); '> Language:English! </button> 
+			<button class='MenuButtons' onclick="ChangeDifChangeButtonPress()" style='position:fixed; top:200px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(0,255,0,0.75); '> Difficulty:Easy! </button> 
 
 			<!-- <button> This is a button for advance left</button> -->			
 		</div>
@@ -2708,6 +2708,8 @@ function draw(timestamp)
     //Convert degrees to radian 
     //var rad = 180 * Math.PI / 180;
 
+
+
     //Set the origin to the center of the image
     //maindiv.translate(x + width / 2, y + height / 2);
 
@@ -2715,13 +2717,20 @@ function draw(timestamp)
 	//docu.style.webkitTransform = 'rotate( ' + 90 + 'deg  )';	
 
 
-
+	canvas.width  = window.innerWidth;
+	canvas.height = window.innerHeight;	
+	
+	//canvas.width  = window.innerWidth;
+	//canvas.height = window.innerHeight;		
     //clean canvas screen
-    canvas.width=canvas.width;
+    //canvas.width=canvas.width;
+
+	
     //screen
     ctx.beginPath();
-	ctx.scale(0.5, 0.5) // Doubles size of anything draw to canvas.
-	ctx.drawImage(BGImage,0,0, 1500, 1000);//900 to then fit the whole thing	 //this is the backround Occupy whole screen
+	ctx.scale(0.4, 0.4) // Doubles size of anything draw to canvas.
+	//ctx.scale(0.5, 0.5) // Doubles size of anything draw to canvas.
+	ctx.drawImage(BGImage,0,0, window.innerWidth*4, window.innerHeight*4);//900 to then fit the whole thing	 //this is the backround Occupy whole screen
 	//ctx.rotate(-90 * Math.PI / 180); //works as way to rotate all the actors
 	ctx.drawImage(COSImage, 10, 10);	 //this is the backround Occupy whole screen	
 	

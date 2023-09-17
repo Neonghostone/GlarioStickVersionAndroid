@@ -12,33 +12,15 @@
         width: 100%;
         height: 100%;
         margin: 0;
-        padding: 0;
+        padding: 0px;
         position: absolute;
         font-weight: normal;
         font-family: "Courier New", Courier, monospace;
-		scale: 0.80;		
+		scale: 1.0;		
         }
 		
-	#maindiv:fullscreen
-	{
-        -webkit-text-size-adjust: none;
-		/*background-image: url('CaelumGladioDefaultBackround.png');*/
-
-		background-repeat: no-repeat;
-		background-attachment: fixed; 
-		background-size: 100% 100%;			
-		left: 100px;
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        position: relative;
-        font-weight: normal;
-        font-family: "Courier New", Courier, monospace;
-  
-	}	
 			
-   #maindiv:not(:fullscreen) 
+   #maindiv:
         {
         -webkit-text-size-adjust: none;
 		/*background-image: url('CaelumGladioDefaultBackround.png');*/
@@ -55,7 +37,7 @@
         font-family: "Courier New", Courier, monospace;
         }
 		
-   #canvasdiv:fullscreen
+   #canvasdiv:
         {
 
         /*left: 0;*/
@@ -65,24 +47,9 @@
         width: 505px;
         height: 305px;
         margin: 0px;
-        padding: 250px;
+        padding: 0px;
         position: relative;
         }
 		
-   #canvasdiv:not(:fullscreen) 
-        {
 
-        /*left: 0%;*/
-       /* top: 0%;*/
-        /*transform: translate(-25%, -25%);*/
-        /*-webkit-transform: translate(-25%, -25%);*/
-        width: 505px;
-        height: 320px;
-        margin: 0;
-        padding: 0;
-        position: relative; 
-        }
-				
-		
-		
 
