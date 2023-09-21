@@ -59,8 +59,10 @@
 
 			<button class='MenuButtons' id='PlayButton' onclick="StartGameButtonPress()" style='position:fixed; top:50px; height: 0px; height: 50px; width: 150px; left: 250px; color:rgba(255,255,255,0.75); background-color:rgba(0,0,255,0.75); '> PLAY! </button> 
 			<button class='MenuButtons' onclick="ChangeLanguageChangeButtonPress()" style='position:fixed; top:125px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(255,255,0,0.75); '> Language:English! </button> 
-			<button class='MenuButtons' onclick="ChangeDifChangeButtonPress()" style='position:fixed; top:200px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(0,255,0,0.75); '> Difficulty:Easy! </button> 
-
+			<button class='MenuButtons' onclick="ChangeDifChangeButtonPress()" style='position:fixed; top:200px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(0,255,0,0.75); '> Difficulty:Easy! </button> 			
+			<button class='MenuButtons' onclick="RestartCampaignButtonPress()" style='position:fixed; top:275px; height: 100px; height: 50px; width: 150px; left: 250px; background-color:rgba(255,0,0,0.75); '> Restart Campaign! </button> 
+			<div class='MenuButtons' id = 'bHasPassedCampLabel' style='position:fixed; top:275px; height: 100px; height: 50px; width: 150px; left: 405px; background-color:rgba(0,0,0,0.0); '  >  bHas Passed Campaign ?  <script type="text/javascript"> if( localStorage.getItem('bHasPassedGame') == true ){ document.getElementById('bHasPassedCampLabel').textContent = "You succesfully passed the campaign!";  }else{  document.getElementById('bHasPassedCampLabel').textContent = "You still need to complete the campaign, fight!"; } </script> </div>
+			
 			<!-- <button> This is a button for advance left</button> -->			
 		</div>
 	</div><!-- maindiv -->
@@ -125,6 +127,7 @@ var MainSoundtrack = new Audio('MainMusic.ogg'); //WIP
 var SpeedOfMainCharacter = 5;
 
 
+//console.log( localStorage.getItem('bHasPassedGame') );
 
 class Universe
 { 
@@ -228,11 +231,31 @@ class Universe
 
 		GetUniverse().MainBiController.posses(GetUniverse().MainCharacter); //Posses by player controller					//Collisions -X -Y X Y 
 		
-		//GetUniverse().MainBiController	
-		
-
-		
+		//this.CompleteStage("Win"); 	// to go fast
+	
 	}
+	
+	EndGameGoToMenu()
+	{
+		this.level = -3;		
+		//GetUniverse().MainCharacter.DestroySelf(); not necessary as it sticks to it's level
+		
+		document.getElementsByClassName('PlayButtons')[0].style.visibility = 'hidden';
+		document.getElementsByClassName('PlayButtons')[1].style.visibility = 'hidden';	
+		document.getElementsByClassName('PlayButtons')[2].style.visibility = 'hidden';	
+		document.getElementsByClassName('PlayButtons')[3].style.visibility = 'hidden';	
+		document.getElementsByClassName('PlayButtons')[4].style.visibility = 'hidden';			
+		
+		document.getElementsByClassName('MenuButtons')[0].style.display = "block";	
+		document.getElementsByClassName('MenuButtons')[1].style.display = "block";		
+		document.getElementsByClassName('MenuButtons')[2].style.display = "block";
+		document.getElementsByClassName('MenuButtons')[3].style.display = "block";
+		document.getElementsByClassName('MenuButtons')[4].style.display = "block";		
+		
+		
+		console.log("FROM universe Should end game now!!!!!!!!!!!!!!!!!"); 
+	}
+	
 	
 	CompleteStage( Reason = "Win" ) 
 	{
@@ -242,8 +265,11 @@ class Universe
 		{
 			this.StageCompleteState = "Win";
 		}
-	
-	
+		
+		localStorage.setItem('bHasPassedGame',true);
+		document.getElementById('bHasPassedCampLabel').textContent = "First placeholder stage passed!!!";
+		this.EndGameGoToMenu(); 
+		
 	}
 	
 	
@@ -2384,7 +2410,7 @@ function CreateLevel()
 	200, 2, 2, 
 	'ThirdEnemyStick'
 	);		
-		
+	ThirdEnemyMinotaur.ActorHealth = 30;		
 
 
 	ForthEnemyMinotaur = SpawnEnemy(500, 0, 
@@ -2394,7 +2420,7 @@ function CreateLevel()
 	200, 2, 3, 
 	'ForthEnemyStick'
 	);	
-	
+	ForthEnemyMinotaur.ActorHealth = 45;	
 	
 	
 	//SpawnRudis(500, 0, 0);
@@ -3257,18 +3283,23 @@ function StartGameButtonPress()
 {
 	//MainSoundtrack.play(); //It does need player interaction Change of plans use it whenever the game it is started USE A GLOBAL BUTTON
 	MainSoundtrack.loop = true; 	
-	GetUniverse().BeginPlayGame();
+
 	//document.getElementsByClassName('MenuButtons').style.visibility = 'hidden';
+	
 	
 	document.getElementsByClassName('MenuButtons')[0].style.display = "none";	
 	document.getElementsByClassName('MenuButtons')[1].style.display = "none";		
 	document.getElementsByClassName('MenuButtons')[2].style.display = "none";
+	document.getElementsByClassName('MenuButtons')[3].style.display = "none";
+	document.getElementsByClassName('MenuButtons')[4].style.display = "none";
 
 	document.getElementsByClassName('PlayButtons')[0].style.visibility = 'visible';
 	document.getElementsByClassName('PlayButtons')[1].style.visibility = 'visible';	
 	document.getElementsByClassName('PlayButtons')[2].style.visibility = 'visible';	
 	document.getElementsByClassName('PlayButtons')[3].style.visibility = 'visible';	
 	document.getElementsByClassName('PlayButtons')[4].style.visibility = 'visible';	
+	
+	GetUniverse().BeginPlayGame();	
 	//document.getElementById('PlayButton').style.display = "none";;	
 
     //canvasdiv
@@ -3308,15 +3339,27 @@ function StartGameButtonPress()
 	
 }
 
+//Desc: Neongho: Change language for the whole thing remember using auto translate 
 function ChangeLanguageChangeButtonPress()
 {
 	//GetUniverse().BeginPlayGame();		
 }
 
+//Desc: Neongho: Change difficulty for the whole campaign at start 
 function ChangeDifChangeButtonPress()
 {
 	//GetUniverse().BeginPlayGame();		
 }
+
+//Desc: Neongho: Restarts the save data
+function RestartCampaignButtonPress()
+{
+	localStorage.setItem('bHasPassedGame',false);
+	
+	document.getElementById('bHasPassedCampLabel').textContent = "Campaign still to get done, Fight!";
+	
+}
+
 
 function HandlePawnDead(PawnThatDied)
 {
